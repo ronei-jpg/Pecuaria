@@ -157,16 +157,16 @@
       <!-- FORMULÁRIO DE CADASTRO -->
       <form id="form-register" class="hidden" onsubmit="cadastrarUsuarioInicial(event)">
         <label>Organização:</label>
-        <input type="text" id="reg-name" required placeholder="Nome do grupo ou fazenda principal">
+        <input type="text" id="reg-name" required placeholder="Nome do grupo">
         <label>Usuário:</label>
-        <input type="text" id="reg-user" required placeholder="Nome de usuário para login">
+        <input type="text" id="reg-user" required placeholder="Nome do usuário">
         <label>Senha:</label>
-        <input type="password" id="reg-pass" required placeholder="Defina a senha">
+        <input type="password" id="reg-pass" required placeholder="Senha">
         <button type="submit" class="btn">CADASTRAR</button>
       </form>
     </div>
 
-    <!-- TELA 2: SELEÇÃO DE PROPRIEDADE -->
+    <!-- TELA 2: SELEÇÃO E CRIAÇÃO RÁPIDA DE PROPRIEDADE -->
     <div id="screen-fazendas" class="card hidden">
       <div class="header-bar">
         <div>
@@ -176,11 +176,26 @@
         <button class="btn btn-secondary" style="width: auto; margin:0; padding: 8px 15px;" onclick="sair()">Encerrar Sessão</button>
       </div>
 
-      <label>Propriedade Cadastrada:</label>
-      <select id="select-fazenda">
-        <option value="">-- Nenhuma propriedade cadastrada --</option>
-      </select>
-      <button class="btn" onclick="acessarFazenda()">ACESSAR PROPRIEDADE</button>
+      <div id="area-selecao-propriedade">
+        <label>Propriedade Cadastrada:</label>
+        <select id="select-fazenda">
+          <option value="">-- Nenhuma propriedade cadastrada --</option>
+        </select>
+        <button class="btn" onclick="acessarFazenda()">ACESSAR PROPRIEDADE</button>
+      </div>
+
+      <!-- CRIAÇÃO RÁPIDA DE FAZENDA (SEMENTE) -->
+      <div id="area-criar-propriedade-rapida" class="section-box" style="margin-top: 25px;">
+        <h3>Cadastrar Propriedade</h3>
+        <label>Nome da Propriedade:</label>
+        <input type="text" id="quick-fazenda-nome" placeholder="Nome da propriedade">
+        <label>País / Região:</label>
+        <select id="quick-fazenda-pais">
+          <option value="Brasil">Brasil</option>
+          <option value="Paraguai">Paraguai</option>
+        </select>
+        <button class="btn btn-secondary" style="margin-top: 15px;" onclick="salvarFazendaRapida()">CRIAR PROPRIEDADE</button>
+      </div>
     </div>
 
     <!-- TELA 3: HUB DE MÓDULOS -->
@@ -238,17 +253,15 @@
         <button class="btn btn-secondary" style="width: auto; margin:0; padding: 8px 15px;" onclick="fecharConfiguracoes()">Voltar ao Painel</button>
       </div>
 
-      <!-- EDITAR DADOS / SEGURANÇA -->
       <div class="section-box">
         <h3>Alterar Senha e Organização</h3>
         <label>Organização:</label>
         <input type="text" id="cfg-edit-org">
         <label>Nova Senha:</label>
-        <input type="password" id="cfg-edit-pass" placeholder="Digite uma nova senha para alterar">
+        <input type="password" id="cfg-edit-pass" placeholder="Nova senha">
         <button class="btn" onclick="atualizarDadosConta()">SALVAR ALTERAÇÕES DA CONTA</button>
       </div>
 
-      <!-- EDITAR PROPRIEDADE SELECIONADA -->
       <div class="section-box">
         <h3>Editar Propriedade Atual</h3>
         <label>Nome da Propriedade:</label>
@@ -256,11 +269,10 @@
         <button class="btn btn-secondary" onclick="atualizarNomeFazenda()">ATUALIZAR NOME DA PROPRIEDADE</button>
       </div>
 
-      <!-- CADASTRAR PROPRIEDADE -->
       <div class="section-box">
         <h3>Cadastrar Nova Propriedade</h3>
         <label>Nome da Propriedade:</label>
-        <input type="text" id="cfg-fazenda-nome" placeholder="Nome da fazenda ou estância">
+        <input type="text" id="cfg-fazenda-nome" placeholder="Nome da propriedade">
         <label>País / Região:</label>
         <select id="cfg-fazenda-pais">
           <option value="Brasil">Brasil</option>
@@ -269,11 +281,10 @@
         <button class="btn" onclick="salvarFazenda()">CADASTRAR PROPRIEDADE</button>
       </div>
 
-      <!-- CADASTRAR USUÁRIO -->
       <div class="section-box">
         <h3>Cadastrar Usuário / Sublogin</h3>
         <label>Organização / Nome:</label>
-        <input type="text" id="cfg-user-nome" placeholder="Nome do usuário ou funcionário">
+        <input type="text" id="cfg-user-nome" placeholder="Nome do usuário">
         <label>Usuário de Acesso:</label>
         <input type="text" id="cfg-user-login" placeholder="Nome de usuário para o login">
         <label>Senha:</label>
@@ -365,6 +376,9 @@
       
       document.getElementById('user-display').innerText = `Organização/Usuário: ${usuarioLogado.nome}`;
 
+      const isDono = usuarioLogado.tipo === 'dono' || usuarioLogado.tipo === 'admin';
+      document.getElementById('area-criar-propriedade-rapida').classList.toggle('hidden', !isDono);
+
       atualizarSelectFazendas();
     }
 
@@ -381,7 +395,7 @@
       }
 
       if (permitidas.length === 0) {
-        select.innerHTML = '<option value="">-- Nenhuma propriedade disponível --</option>';
+        select.innerHTML = '<option value="">-- Nenhuma propriedade cadastrada --</option>';
       } else {
         permitidas.forEach(f => {
           select.innerHTML += `<option value="${f.id}">${f.nome} (${f.pais})</option>`;
@@ -396,10 +410,32 @@
       }
     }
 
+    function salvarFazendaRapida() {
+      const nome = document.getElementById('quick-fazenda-nome').value.trim();
+      const pais = document.getElementById('quick-fazenda-pais').value;
+
+      if (!nome) {
+        alert("Informe o nome da propriedade.");
+        return;
+      }
+
+      const nova = {
+        id: Date.now(),
+        nome: nome,
+        pais: pais
+      };
+
+      fazendas.push(nova);
+      localStorage.setItem('pec_fazendas', JSON.stringify(fazendas));
+      document.getElementById('quick-fazenda-nome').value = '';
+      atualizarSelectFazendas();
+      alert("Propriedade cadastrada com sucesso.");
+    }
+
     function acessarFazenda() {
       const id = Number(document.getElementById('select-fazenda').value);
       if (!id) {
-        alert("Selecione uma propriedade.");
+        alert("Cadastre e selecione uma propriedade para continuar.");
         return;
       }
 
