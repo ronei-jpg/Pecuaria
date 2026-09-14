@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SISTEMA UNIFICADO DE GESTÃO PECUÁRIA</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root { 
       --green-dark: #1b4332; 
@@ -27,7 +26,7 @@
 
     .container { 
       width: 100%; 
-      max-width: 1100px; 
+      max-width: 960px; 
       padding: 20px; 
       box-sizing: border-box; 
     }
@@ -43,11 +42,11 @@
 
     h1, h2, h3, h4 { color: var(--green-dark); margin-top: 0; }
 
-    label { font-size: 13px; font-weight: bold; color: var(--green-medium); display: block; margin-top: 10px; }
+    label { font-size: 13px; font-weight: bold; color: var(--green-medium); display: block; margin-top: 14px; }
     input, select { 
       width: 100%; 
-      padding: 10px; 
-      margin-top: 4px; 
+      padding: 12px; 
+      margin-top: 6px; 
       border: 1px solid #ccc; 
       border-radius: 8px; 
       box-sizing: border-box; 
@@ -58,21 +57,20 @@
       background: var(--green-dark); 
       color: white; 
       border: none; 
-      padding: 12px 18px; 
+      padding: 14px; 
+      width: 100%; 
       border-radius: 8px; 
       font-weight: bold; 
-      font-size: 14px; 
+      font-size: 15px; 
       cursor: pointer; 
-      transition: background 0.2s;
+      margin-top: 15px; 
     }
     .btn:hover { background: var(--green-medium); }
     .btn-secondary { background: #5a6268; }
     .btn-secondary:hover { background: #495057; }
     .btn-outline { background: white; color: var(--green-dark); border: 2px solid var(--green-medium); font-weight: bold; }
     .btn-outline:hover { background: var(--green-light); }
-    .btn-danger { background: #c0392b; color: white; }
 
-    /* LAYOUT DOS MÓDULOS NO HUB */
     .modules-grid { 
       display: grid; 
       grid-template-columns: repeat(3, 1fr); 
@@ -126,6 +124,12 @@
       cursor: pointer;
       font-size: 14px;
     }
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      cursor: pointer;
+    }
 
     .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
     .tab-btn { flex: 1; padding: 12px; background: #e9ecef; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: #495057; }
@@ -136,101 +140,8 @@
       padding: 20px; 
       border-radius: 8px; 
       border: 1px solid #eee;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
-
-    /* ESTILOS ESPECÍFICOS DO MÓDULO PLANEJA */
-    .planeja-layout {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 20px;
-    }
-
-    .sidebar-menu {
-      background: #f8faf8;
-      border-radius: 10px;
-      padding: 15px;
-      border: 1px solid #e0e8e0;
-      height: fit-content;
-    }
-
-    .sidebar-btn {
-      width: 100%;
-      text-align: left;
-      padding: 12px 15px;
-      background: transparent;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      color: var(--green-dark);
-      cursor: pointer;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .sidebar-btn:hover, .sidebar-btn.active {
-      background: var(--green-dark);
-      color: white;
-    }
-
-    .metric-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .metric-card {
-      background: white;
-      border: 1px solid #e0e8e0;
-      border-left: 4px solid #d4ac0d;
-      padding: 15px;
-      border-radius: 8px;
-    }
-    .metric-card span { font-size: 11px; font-weight: bold; color: #777; text-transform: uppercase; }
-    .metric-card h3 { font-size: 20px; margin: 8px 0 0 0; color: var(--green-dark); }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 13px;
-    }
-    .data-table th, .data-table td {
-      border: 1px solid #eee;
-      padding: 10px;
-      text-align: center;
-    }
-    .data-table th { background: #f4f7f4; color: var(--green-dark); }
-
-    .circle-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-top: 15px;
-      background: #1c3b2b;
-      padding: 20px;
-      border-radius: 10px;
-    }
-
-    .circle-item {
-      width: 85px;
-      height: 85px;
-      border-radius: 50%;
-      background: #d4ac0d;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: bold;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    .circle-item.saida { background: #7f8c8d; }
 
     .hidden { display: none !important; }
   </style>
@@ -248,14 +159,16 @@
         <button class="tab-btn" id="tab-register" onclick="alternarAbaAuth('register')">Criar Conta</button>
       </div>
 
+      <!-- FORMULÁRIO DE LOGIN -->
       <form id="form-login" onsubmit="realizarLogin(event)">
         <label>Usuário:</label>
         <input type="text" id="login-user" required placeholder="Digite o usuário">
         <label>Senha:</label>
         <input type="password" id="login-pass" required placeholder="Digite a senha">
-        <button type="submit" class="btn" style="width:100%; margin-top:15px;">ENTRAR</button>
+        <button type="submit" class="btn">ENTRAR</button>
       </form>
 
+      <!-- FORMULÁRIO DE CADASTRO -->
       <form id="form-register" class="hidden" onsubmit="cadastrarUsuarioInicial(event)">
         <label>Organização:</label>
         <input type="text" id="reg-name" required placeholder="Nome do grupo">
@@ -263,7 +176,7 @@
         <input type="text" id="reg-user" required placeholder="Nome do usuário">
         <label>Senha:</label>
         <input type="password" id="reg-pass" required placeholder="Senha">
-        <button type="submit" class="btn" style="width:100%; margin-top:15px;">CADASTRAR</button>
+        <button type="submit" class="btn">CADASTRAR</button>
       </form>
     </div>
 
@@ -274,7 +187,7 @@
           <h2>Seleção de Propriedade</h2>
           <span id="user-display" style="font-size: 13px; color: #666;">Usuário: -</span>
         </div>
-        <button class="btn btn-secondary" onclick="sair()">Encerrar Sessão</button>
+        <button class="btn btn-secondary" style="width: auto; margin:0; padding: 8px 15px;" onclick="sair()">Encerrar Sessão</button>
       </div>
 
       <div id="area-selecao-propriedade">
@@ -282,13 +195,14 @@
         <select id="select-fazenda">
           <option value="">-- Nenhuma propriedade cadastrada --</option>
         </select>
-        <button class="btn" style="width:100%; margin-top:15px;" onclick="acessarFazenda()">ACESSAR PROPRIEDADE</button>
+        <button class="btn" onclick="acessarFazenda()">ACESSAR PROPRIEDADE</button>
       </div>
 
       <div style="margin-top: 15px;" id="btn-toggle-criar-prop">
-        <button class="btn btn-outline" style="width:100%;" onclick="toggleCriarPropriedade()">+ Cadastrar Nova Propriedade</button>
+        <button class="btn btn-outline" onclick="toggleCriarPropriedade()">+ Cadastrar Nova Propriedade</button>
       </div>
 
+      <!-- BOX OCULTO PARA CADASTRO DE FAZENDA -->
       <div id="area-criar-propriedade-rapida" class="section-box hidden" style="margin-top: 20px;">
         <h3>Cadastrar Propriedade</h3>
         <label>Nome da Propriedade:</label>
@@ -298,9 +212,9 @@
           <option value="Brasil">Brasil</option>
           <option value="Paraguai">Paraguai</option>
         </select>
-        <div style="display: flex; gap: 10px; margin-top:15px;">
-          <button class="btn btn-secondary" onclick="salvarFazendaRapida()">CRIAR PROPRIEDADE</button>
-          <button class="btn btn-secondary" style="background: #999;" onclick="toggleCriarPropriedade()">CANCELAR</button>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-secondary" style="margin-top: 15px;" onclick="salvarFazendaRapida()">CRIAR PROPRIEDADE</button>
+          <button class="btn btn-secondary" style="margin-top: 15px; background: #999;" onclick="toggleCriarPropriedade()">CANCELAR</button>
         </div>
       </div>
     </div>
@@ -312,7 +226,7 @@
           <h2 id="current-fazenda-display">Propriedade</h2>
         </div>
         <div>
-          <button class="btn btn-secondary" onclick="voltarParaFazendas()">Trocar Propriedade</button>
+          <button class="btn btn-secondary" style="width: auto; margin:0;" onclick="voltarParaFazendas()">Trocar Propriedade</button>
         </div>
       </div>
 
@@ -349,149 +263,13 @@
       </div>
     </div>
 
-    <!-- TELA 4: MÓDULO PLANEJA (4 SEÇÕES COM SIDEBAR) -->
-    <div id="screen-planeja" class="card hidden">
-      <div class="header-bar">
-        <div>
-          <h2>PLANEJAMENTO PECUÁRIO • CAPACIDADE UA/HA</h2>
-          <span id="planeja-fazenda-nome" style="font-size: 16px; font-weight: bold; color: var(--green-dark);">Estância</span>
-        </div>
-        <button class="btn btn-secondary" onclick="fecharModuloPlaneja()">← Voltar ao Painel</button>
-      </div>
-
-      <div class="planeja-layout">
-        <!-- SIDEBAR DE NAVEGAÇÃO INTERNA -->
-        <div class="sidebar-menu">
-          <button class="sidebar-btn active" id="btn-nav-visao" onclick="navegarPlaneja('visao')">📊 Visão Geral</button>
-          <button class="sidebar-btn" id="btn-nav-lotes" onclick="navegarPlaneja('lotes')">🐂 Lotes</button>
-          <button class="sidebar-btn" id="btn-nav-piquetes" onclick="navegarPlaneja('piquetes')">🌱 Piquetes</button>
-          <button class="sidebar-btn" id="btn-nav-distribuir" onclick="navegarPlaneja('distribuir')">🔄 Distribuir Animais</button>
-        </div>
-
-        <!-- CONTEÚDO DAS ABAS -->
-        <div class="planeja-content">
-
-          <!-- 1. VISÃO GERAL -->
-          <div id="sub-visao" class="sub-screen">
-            <div class="metric-grid">
-              <div class="metric-card">
-                <span>Área Total (Piquetes c/ Área)</span>
-                <h3 id="pl-area-total">0,00 ha</h3>
-              </div>
-              <div class="metric-card">
-                <span>Total de Cabeças</span>
-                <h3 id="pl-total-cab">0</h3>
-              </div>
-              <div class="metric-card">
-                <span>UA Total do Rebanho</span>
-                <h3 id="pl-total-ua">0,0</h3>
-              </div>
-              <div class="metric-card">
-                <span>UA/ha Atual da Fazenda</span>
-                <h3 id="pl-ua-ha-atual">—</h3>
-              </div>
-            </div>
-
-            <!-- GRÁFICO DA CURVA "AVIÃO" -->
-            <div class="section-box">
-              <h4 style="text-align: center;">Capacidade-alvo da fazenda (UA/ha) x Projetado</h4>
-              <canvas id="chartAviao" height="100"></canvas>
-            </div>
-
-            <!-- TABELA DE SAZONALIDADE -->
-            <div class="section-box">
-              <h4>Capacidade da fazenda (UA/ha) — Sazonalidade ("Avião")</h4>
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Mês</th><th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><b>Base (referência)</b></td>
-                    <td>2,50</td><td>2,41</td><td>2,18</td><td>1,85</td><td>1,53</td><td>1,29</td><td>1,20</td><td>1,29</td><td>1,53</td><td>1,85</td><td>2,18</td><td>2,41</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- 2. LOTES -->
-          <div id="sub-lotes" class="sub-screen hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-              <h3>Cadastro de Lotes</h3>
-              <button class="btn" onclick="adicionarLoteManual()">+ Lote Manual</button>
-            </div>
-
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Lote</th>
-                  <th>Categoria</th>
-                  <th>Cabeças</th>
-                  <th>Peso Médio (kg)</th>
-                  <th>UA Total</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="tbl-lotes-body">
-                <tr><td colspan="6">Nenhum lote cadastrado.</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- 3. PIQUETES -->
-          <div id="sub-piquetes" class="sub-screen hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-              <h3>Cadastro de Piquetes</h3>
-              <button class="btn" onclick="adicionarPiqueteManual()">+ Piquete Manual</button>
-            </div>
-
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Piquete</th>
-                  <th>Área (ha)</th>
-                  <th>UA/ha Alvo</th>
-                  <th>Capacidade (UA)</th>
-                </tr>
-              </thead>
-              <tbody id="tbl-piquetes-body">
-                <tr><td colspan="4">Nenhum piquete cadastrado.</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- 4. DISTRIBUIR ANIMAIS -->
-          <div id="sub-distribuir" class="sub-screen hidden">
-            <h3>Distribuição do Rebanho nos Piquetes</h3>
-            <div class="metric-grid">
-              <div class="metric-card"><span>Total Animais</span><h3 id="dist-tot-animais">0</h3></div>
-              <div class="metric-card"><span>Total Alocado</span><h3 id="dist-tot-alocado">0</h3></div>
-              <div class="metric-card"><span>UA Usada</span><h3 id="dist-ua-usada">0,0</h3></div>
-              <div class="metric-card"><span>UA de Vaga</span><h3 id="dist-ua-vaga">0,0</h3></div>
-            </div>
-
-            <div class="section-box">
-              <h4>1. Selecione o Lote e Aloque no Piquete</h4>
-              <div class="circle-grid" id="grid-piquetao">
-                <div class="circle-item saida">Saída<br><small>Não ocupa</small></div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- TELA 5: CONFIGURAÇÕES -->
+    <!-- TELA 4: CONFIGURAÇÕES -->
     <div id="screen-config" class="card hidden">
       <div class="header-bar">
         <div>
           <h2>Configurações</h2>
         </div>
-        <button class="btn btn-secondary" onclick="fecharConfiguracoes()">Voltar ao Painel</button>
+        <button class="btn btn-secondary" style="width: auto; margin:0; padding: 8px 15px;" onclick="fecharConfiguracoes()">Voltar ao Painel</button>
       </div>
 
       <div class="section-box">
@@ -500,9 +278,29 @@
         <input type="text" id="cfg-edit-org">
         <label>Nova Senha:</label>
         <input type="password" id="cfg-edit-pass" placeholder="Nova senha">
-        <button class="btn" style="margin-top:15px;" onclick="atualizarDadosConta()">SALVAR ALTERAÇÕES DA CONTA</button>
+        <button class="btn" onclick="atualizarDadosConta()">SALVAR ALTERAÇÕES DA CONTA</button>
       </div>
 
+      <div class="section-box">
+        <h3>Editar Propriedade Atual</h3>
+        <label>Nome da Propriedade:</label>
+        <input type="text" id="cfg-edit-fazenda-nome">
+        <button class="btn btn-secondary" onclick="atualizarNomeFazenda()">ATUALIZAR NOME DA PROPRIEDADE</button>
+      </div>
+
+      <div class="section-box">
+        <h3>Cadastrar Nova Propriedade</h3>
+        <label>Nome da Propriedade:</label>
+        <input type="text" id="cfg-fazenda-nome" placeholder="Nome da propriedade">
+        <label>País / Região:</label>
+        <select id="cfg-fazenda-pais">
+          <option value="Brasil">Brasil</option>
+          <option value="Paraguai">Paraguai</option>
+        </select>
+        <button class="btn" onclick="salvarFazenda()">CADASTRAR PROPRIEDADE</button>
+      </div>
+
+      <!-- FORMULÁRIO DE CADASTRO DE USUÁRIO -->
       <div class="section-box">
         <h3>Cadastrar Usuário</h3>
         <label>Organização:</label>
@@ -530,7 +328,7 @@
           <label class="checkbox-item"><input type="checkbox" value="Engorda" class="cfg-perm"> Engorda</label>
           <label class="checkbox-item"><input type="checkbox" value="Orcamento" class="cfg-perm"> Orçamento</label>
         </div>
-        <button class="btn" style="margin-top:15px;" onclick="salvarUsuarioSub()">CADASTRAR USUÁRIO</button>
+        <button class="btn" onclick="salvarUsuarioSub()">CADASTRAR USUÁRIO</button>
       </div>
     </div>
 
@@ -539,12 +337,8 @@
   <script>
     let usuarios = JSON.parse(localStorage.getItem('pec_usuarios')) || [];
     let fazendas = JSON.parse(localStorage.getItem('pec_fazendas')) || [];
-    let lotes = JSON.parse(localStorage.getItem('pec_lotes')) || [];
-    let piquetes = JSON.parse(localStorage.getItem('pec_piquetes')) || [];
-
     let usuarioLogado = null;
     let fazendaSelecionada = null;
-    let chartInstance = null;
 
     function alternarAbaAuth(aba) {
       document.getElementById('tab-login').classList.toggle('active', aba === 'login');
@@ -564,7 +358,14 @@
         return;
       }
 
-      const novo = { id: Date.now(), tipo: 'dono', nome: name, user: user, pass: pass };
+      const novo = {
+        id: Date.now(),
+        tipo: 'dono',
+        nome: name,
+        user: user,
+        pass: pass
+      };
+
       usuarios.push(novo);
       localStorage.setItem('pec_usuarios', JSON.stringify(usuarios));
       alert("Cadastro realizado com sucesso.");
@@ -576,6 +377,7 @@
       e.preventDefault();
       const user = document.getElementById('login-user').value.trim();
       const pass = document.getElementById('login-pass').value.trim();
+
       const conta = usuarios.find(u => u.user === user && u.pass === pass);
 
       if (!conta) {
@@ -592,13 +394,15 @@
       document.getElementById('screen-fazendas').classList.remove('hidden');
       document.getElementById('screen-hub').classList.add('hidden');
       document.getElementById('screen-config').classList.add('hidden');
-      document.getElementById('screen-planeja').classList.add('hidden');
+      
       document.getElementById('user-display').innerText = `Organização/Usuário: ${usuarioLogado.nome}`;
+
       atualizarSelectFazendas();
     }
 
     function toggleCriarPropriedade() {
-      document.getElementById('area-criar-propriedade-rapida').classList.toggle('hidden');
+      const el = document.getElementById('area-criar-propriedade-rapida');
+      el.classList.toggle('hidden');
     }
 
     function atualizarSelectFazendas() {
@@ -606,7 +410,12 @@
       const cfgSelect = document.getElementById('cfg-user-fazenda');
       select.innerHTML = '';
 
-      let permitidas = (usuarioLogado.tipo === 'dono' || usuarioLogado.tipo === 'administrador') ? fazendas : fazendas.filter(f => f.id === usuarioLogado.fazendaId);
+      let permitidas = [];
+      if (usuarioLogado.tipo === 'dono' || usuarioLogado.tipo === 'administrador') {
+        permitidas = fazendas;
+      } else {
+        permitidas = fazendas.filter(f => f.id === usuarioLogado.fazendaId);
+      }
 
       if (permitidas.length === 0) {
         select.innerHTML = '<option value="">-- Nenhuma propriedade cadastrada --</option>';
@@ -627,20 +436,32 @@
     function salvarFazendaRapida() {
       const nome = document.getElementById('quick-fazenda-nome').value.trim();
       const pais = document.getElementById('quick-fazenda-pais').value;
-      if (!nome) return alert("Informe o nome da propriedade.");
 
-      const nova = { id: Date.now(), nome: nome, pais: pais };
+      if (!nome) {
+        alert("Informe o nome da propriedade.");
+        return;
+      }
+
+      const nova = {
+        id: Date.now(),
+        nome: nome,
+        pais: pais
+      };
+
       fazendas.push(nova);
       localStorage.setItem('pec_fazendas', JSON.stringify(fazendas));
       document.getElementById('quick-fazenda-nome').value = '';
       toggleCriarPropriedade();
       atualizarSelectFazendas();
-      alert("Propriedade cadastrada.");
+      alert("Propriedade cadastrada com sucesso.");
     }
 
     function acessarFazenda() {
       const id = Number(document.getElementById('select-fazenda').value);
-      if (!id) return alert("Selecione uma propriedade.");
+      if (!id) {
+        alert("Cadastre e selecione uma propriedade para continuar.");
+        return;
+      }
 
       fazendaSelecionada = fazendas.find(f => f.id === id);
       document.getElementById('current-fazenda-display').innerText = fazendaSelecionada.nome;
@@ -648,112 +469,132 @@
       const isDonoOuAdmin = usuarioLogado.tipo === 'dono' || usuarioLogado.tipo === 'administrador';
       document.getElementById('app-Configuracoes').classList.toggle('hidden', !isDonoOuAdmin);
 
+      const modulos = ['Campo', 'Planeja', 'Pastagem', 'Engorda', 'Orcamento'];
+      modulos.forEach(mod => {
+        const el = document.getElementById(`app-${mod}`);
+        if (isDonoOuAdmin) {
+          el.classList.remove('hidden');
+        } else {
+          const liberado = usuarioLogado.permissoes && usuarioLogado.permissoes.includes(mod);
+          el.classList.toggle('hidden', !liberado);
+        }
+      });
+
       document.getElementById('screen-fazendas').classList.add('hidden');
       document.getElementById('screen-hub').classList.remove('hidden');
     }
 
-    function abrirModulo(modulo) {
-      if (modulo === 'Configuracoes') {
-        document.getElementById('cfg-edit-org').value = usuarioLogado.nome;
-        atualizarSelectFazendas();
-        document.getElementById('screen-hub').classList.add('hidden');
-        document.getElementById('screen-config').classList.remove('hidden');
-        return;
-      }
-      if (modulo === 'Planeja') {
-        document.getElementById('planeja-fazenda-nome').innerText = fazendaSelecionada.nome;
-        document.getElementById('screen-hub').classList.add('hidden');
-        document.getElementById('screen-planeja').classList.remove('hidden');
-        navegarPlaneja('visao');
-        return;
-      }
-      alert(`Módulo ${modulo} selecionado.`);
-    }
-
-    function fecharModuloPlaneja() {
-      document.getElementById('screen-planeja').classList.add('hidden');
-      document.getElementById('screen-hub').classList.remove('hidden');
-    }
-
-    function navegarPlaneja(aba) {
-      ['visao', 'lotes', 'piquetes', 'distribuir'].forEach(sub => {
-        document.getElementById(`sub-${sub}`).classList.toggle('hidden', sub !== aba);
-        document.getElementById(`btn-nav-${sub}`).classList.toggle('active', sub === aba);
-      });
-
-      if (aba === 'visao') inicializarGraficoAviao();
-    }
-
-    function inicializarGraficoAviao() {
-      const ctx = document.getElementById('chartAviao').getContext('2d');
-      if (chartInstance) chartInstance.destroy();
-
-      chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Set', 'Out', 'Nov', 'Dez', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago'],
-          datasets: [{
-            label: 'Capacidade-alvo (UA/ha)',
-            data: [1.53, 1.85, 2.18, 2.41, 2.50, 2.41, 2.18, 1.85, 1.53, 1.29, 1.20, 1.29],
-            borderColor: '#b9770e',
-            borderDash: [5, 5],
-            tension: 0.4
-          }]
-        }
-      });
-    }
-
-    function adicionarLoteManual() {
-      const nome = prompt("Nome do Lote:");
-      const cab = prompt("Quantidade de Cabeças:");
-      const peso = prompt("Peso Médio (kg):");
-      if (!nome || !cab || !peso) return;
-
-      const ua = (Number(cab) * Number(peso) / 450).toFixed(1);
-      lotes.push({ id: Date.now(), nome, cab, peso, ua, status: 'Ativo' });
-      localStorage.setItem('pec_lotes', JSON.stringify(lotes));
-      renderizarLotes();
-    }
-
-    function renderizarLotes() {
-      const body = document.getElementById('tbl-lotes-body');
-      body.innerHTML = '';
-      if (lotes.length === 0) {
-        body.innerHTML = '<tr><td colspan="6">Nenhum lote cadastrado.</td></tr>';
-        return;
-      }
-      lotes.forEach(l => {
-        body.innerHTML += `<tr><td>${l.nome}</td><td>Geral</td><td>${l.cab}</td><td>${l.peso}</td><td>${l.ua}</td><td><span style="color:green;font-weight:bold;">${l.status}</span></td></tr>`;
-      });
-    }
-
-    function adicionarPiqueteManual() {
-      const nome = prompt("Nome do Piquete:");
-      const area = prompt("Área em Hectares (ha):");
-      if (!nome || !area) return;
-
-      const uaAlvo = 1.20;
-      const capUA = (Number(area) * uaAlvo).toFixed(1);
-      piquetes.push({ id: Date.now(), nome, area, uaAlvo, capUA });
-      localStorage.setItem('pec_piquetes', JSON.stringify(piquetes));
-      renderizarPiquetes();
-    }
-
-    function renderizarPiquetes() {
-      const body = document.getElementById('tbl-piquetes-body');
-      body.innerHTML = '';
-      if (piquetes.length === 0) {
-        body.innerHTML = '<tr><td colspan="4">Nenhum piquete cadastrado.</td></tr>';
-        return;
-      }
-      piquetes.forEach(p => {
-        body.innerHTML += `<tr><td>${p.nome}</td><td>${p.area}</td><td>${p.uaAlvo}</td><td>${p.capUA}</td></tr>`;
-      });
-    }
-
     function fecharConfiguracoes() {
-      document.getElementById('screen-config').classList.add('hidden');
-      document.getElementById('screen-hub').classList.remove('hidden');
+      if (fazendaSelecionada) {
+        document.getElementById('screen-config').classList.add('hidden');
+        document.getElementById('screen-hub').classList.remove('hidden');
+      } else {
+        carregarPainelFazendas();
+      }
+    }
+
+    function salvarFazenda() {
+      const nome = document.getElementById('cfg-fazenda-nome').value.trim();
+      const pais = document.getElementById('cfg-fazenda-pais').value;
+
+      if (!nome) {
+        alert("Informe o nome da propriedade.");
+        return;
+      }
+
+      const nova = {
+        id: Date.now(),
+        nome: nome,
+        pais: pais
+      };
+
+      fazendas.push(nova);
+      localStorage.setItem('pec_fazendas', JSON.stringify(fazendas));
+      document.getElementById('cfg-fazenda-nome').value = '';
+      atualizarSelectFazendas();
+      alert("Propriedade cadastrada.");
+    }
+
+    function salvarUsuarioSub() {
+      const nome = document.getElementById('cfg-user-nome').value.trim();
+      const user = document.getElementById('cfg-user-login').value.trim();
+      const pass = document.getElementById('cfg-user-pass').value.trim();
+      const perfil = document.getElementById('cfg-user-perfil').value;
+      const fazendaId = Number(document.getElementById('cfg-user-fazenda').value);
+
+      const checkboxes = document.querySelectorAll('.cfg-perm:checked');
+      const permissoes = Array.from(checkboxes).map(c => c.value);
+
+      if (!nome || !user || !pass) {
+        alert("Preencha todos os campos.");
+        return;
+      }
+
+      if (usuarios.find(u => u.user === user)) {
+        alert("Usuário já cadastrado.");
+        return;
+      }
+
+      const novoUsuario = {
+        id: Date.now(),
+        tipo: perfil,
+        nome: nome,
+        user: user,
+        pass: pass,
+        fazendaId: fazendaId,
+        permissoes: permissoes
+      };
+
+      usuarios.push(novoUsuario);
+      localStorage.setItem('pec_usuarios', JSON.stringify(usuarios));
+      
+      document.getElementById('cfg-user-nome').value = '';
+      document.getElementById('cfg-user-login').value = '';
+      document.getElementById('cfg-user-pass').value = '';
+      alert("Usuário cadastrado com sucesso.");
+    }
+
+    function atualizarDadosConta() {
+      const novaOrg = document.getElementById('cfg-edit-org').value.trim();
+      const novaPass = document.getElementById('cfg-edit-pass').value.trim();
+
+      if (novaOrg) usuarioLogado.nome = novaOrg;
+      if (novaPass) usuarioLogado.pass = novaPass;
+
+      const idx = usuarios.findIndex(u => u.id === usuarioLogado.id);
+      if (idx !== -1) {
+        usuarios[idx] = usuarioLogado;
+        localStorage.setItem('pec_usuarios', JSON.stringify(usuarios));
+      }
+
+      document.getElementById('user-display').innerText = `Organização/Usuário: ${usuarioLogado.nome}`;
+      alert("Dados da conta atualizados.");
+    }
+
+    function atualizarNomeFazenda() {
+      if (!fazendaSelecionada) {
+        alert("Selecione uma propriedade primeiro.");
+        return;
+      }
+
+      const novoNome = document.getElementById('cfg-edit-fazenda-nome').value.trim();
+      if (!novoNome) return;
+
+      fazendaSelecionada.nome = novoNome;
+      const idx = fazendas.findIndex(f => f.id === fazendaSelecionada.id);
+      if (idx !== -1) {
+        fazendas[idx] = fazendaSelecionada;
+        localStorage.setItem('pec_fazendas', JSON.stringify(fazendas));
+      }
+
+      document.getElementById('current-fazenda-display').innerText = fazendaSelecionada.nome;
+      alert("Nome da propriedade atualizado.");
+    }
+
+    function voltarParaFazendas() {
+      fazendaSelecionada = null;
+      document.getElementById('screen-hub').classList.add('hidden');
+      carregarPainelFazendas();
     }
 
     function sair() {
@@ -762,8 +603,21 @@
       document.getElementById('screen-fazendas').classList.add('hidden');
       document.getElementById('screen-hub').classList.add('hidden');
       document.getElementById('screen-config').classList.add('hidden');
-      document.getElementById('screen-planeja').classList.add('hidden');
       document.getElementById('screen-auth').classList.remove('hidden');
+    }
+
+    function abrirModulo(modulo) {
+      if (modulo === 'Configuracoes') {
+        document.getElementById('cfg-edit-org').value = usuarioLogado.nome;
+        if (fazendaSelecionada) {
+          document.getElementById('cfg-edit-fazenda-nome').value = fazendaSelecionada.nome;
+        }
+        atualizarSelectFazendas();
+        document.getElementById('screen-hub').classList.add('hidden');
+        document.getElementById('screen-config').classList.remove('hidden');
+        return;
+      }
+      alert(`Módulo ${modulo} selecionado.`);
     }
   </script>
 </body>
