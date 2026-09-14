@@ -3,168 +3,301 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plataforma Unificada de Gestão Pecuária</title>
+  <title>SISTEMA UNIFICADO DE GESTÃO PECUÁRIA</title>
   <style>
-    :root { --green-main: #1b4332; --green-light: #e8f5e9; --border: #d8f3dc; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background: #f8faf8; color: #1c2d1b; }
-    
-    /* MENU LATERAL */
-    .app-container { display: flex; min-height: 100vh; }
-    sidebar { width: 240px; background: var(--green-main); color: white; padding: 20px; box-sizing: border-box; }
-    sidebar h2 { font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-top: 0; }
-    sidebar button { display: block; width: 100%; background: transparent; border: none; color: #d8f3dc; text-align: left; padding: 12px 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-bottom: 5px; }
-    sidebar button.active, sidebar button:hover { background: rgba(255,255,255,0.15); color: white; }
-    
-    /* CONTEÚDO PRINCIPAL */
-    main { flex: 1; padding: 20px; box-sizing: border-box; }
-    .page { display: none; }
-    .page.active { display: block; }
-    .card { background: white; padding: 18px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.04); margin-bottom: 15px; }
-    
-    /* FORMULÁRIOS E TABELAS */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .full { grid-column: span 2; }
-    label { font-size: 12px; font-weight: bold; color: #2d6a4f; display: block; margin-top: 8px; }
-    input, select { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ccd6cf; border-radius: 6px; box-sizing: border-box; }
-    .btn-action { background: var(--green-main); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; margin-top: 15px; cursor: pointer; }
-    
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-    th, td { padding: 10px; border-bottom: 1px solid #dfe5df; text-align: right; }
-    th:first-child, td:first-child { text-align: left; }
-    th { background: #f1f4f1; color: #53645a; font-size: 11px; text-transform: uppercase; }
-    .badge-ok { color: #2e6b45; font-weight: bold; }
-    .badge-alert { color: #b54336; font-weight: bold; }
+    :root { 
+      --green-dark: #1b4332; 
+      --green-medium: #2d6a4f; 
+      --green-light: #d8f3dc; 
+      --bg: #f4f7f4; 
+      --text: #1c2d1b; 
+    }
+
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      margin: 0; 
+      background: var(--bg); 
+      color: var(--text); 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      min-height: 100vh; 
+    }
+
+    .container { 
+      width: 100%; 
+      max-width: 900px; 
+      padding: 20px; 
+      box-sizing: border-box; 
+    }
+
+    .card { 
+      background: white; 
+      padding: 30px; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+      border: 1px solid #e0e8e0; 
+      margin-bottom: 20px;
+    }
+
+    h1, h2, h3 { color: var(--green-dark); margin-top: 0; }
+    p { color: #555; font-size: 14px; }
+
+    label { font-size: 12px; font-weight: bold; color: var(--green-medium); display: block; margin-top: 12px; }
+    input, select { 
+      width: 100%; 
+      padding: 12px; 
+      margin-top: 5px; 
+      border: 1px solid #ccc; 
+      border-radius: 8px; 
+      box-sizing: border-box; 
+      font-size: 14px; 
+    }
+
+    .btn { 
+      background: var(--green-dark); 
+      color: white; 
+      border: none; 
+      padding: 14px; 
+      width: 100%; 
+      border-radius: 8px; 
+      font-weight: bold; 
+      font-size: 15px; 
+      cursor: pointer; 
+      margin-top: 20px; 
+      transition: background 0.2s;
+    }
+    .btn:hover { background: var(--green-medium); }
+    .btn-secondary { background: #6c757d; }
+    .btn-secondary:hover { background: #5a6268; }
+
+    /* GRID DOS MÓDULOS */
+    .modules-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+      gap: 15px; 
+      margin-top: 20px; 
+    }
+
+    .module-card { 
+      background: #f8faf8; 
+      border: 2px solid var(--green-light); 
+      padding: 20px; 
+      border-radius: 10px; 
+      cursor: pointer; 
+      text-align: center; 
+      transition: all 0.2s; 
+    }
+    .module-card:hover { 
+      border-color: var(--green-medium); 
+      transform: translateY(-3px); 
+      background: white; 
+    }
+    .module-card .icon { font-size: 32px; margin-bottom: 10px; display: block; }
+    .module-card h3 { font-size: 16px; margin: 5px 0; }
+    .module-card p { font-size: 12px; margin: 0; }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--green-light);
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+    .badge {
+      background: var(--green-light);
+      color: var(--green-dark);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <!-- MENU DE NAVEGAÇÃO DO NOVO SISTEMA -->
-    <sidebar>
-      <h2>🚜 Gestão Pecuária</h2>
-      <button class="active" onclick="mudarTela('fechamento')">1. Fechamento Inttegra</button>
-      <button onclick="mudarTela('orcamento')">2. Rural Orçamento</button>
-    </sidebar>
+  <div class="container">
 
-    <main>
-      <!-- TELA 1: FECHAMENTO INTTEGRA -->
-      <section id="fechamento" class="page active">
-        <div class="card">
-          <h1>Fechamento Zootécnico & Financeiro</h1>
-          <div class="grid-2">
-            <div><label>Machos (Engorda/Confinado):</label><input type="number" id="machos" value="385"></div>
-            <div><label>Fêmeas (Recria a Pasto):</label><input type="number" id="femeas" value="715"></div>
-            <div><label>GMD Mês Machos (kg/dia):</label><input type="number" step="0.01" id="gmdMacho" value="1.35"></div>
-            <div><label>GMD Mês Fêmeas (kg/dia):</label><input type="number" step="0.01" id="gmdFemea" value="0.55"></div>
-            <div class="full"><label>Despesas Operacionais (R$):</label><input type="number" id="despesas" value="95000"></div>
-            <div class="full"><label>Cotação da Arroba (R$):</label><input type="number" id="precoArroba" value="230"></div>
-          </div>
-          <button class="btn-action" onclick="calcularInttegra()">CALCULAR BENCHMARKING</button>
+    <!-- TELA 1: AUTENTICAÇÃO / LOGIN -->
+    <div id="screen-login" class="card">
+      <h1 style="text-align: center;">🚜 SISTEMA UNIFICADO DE GESTÃO PECUÁRIA</h1>
+      <p style="text-align: center;">Acesso Privado & Offline</p>
+      <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+      <form id="form-login" onsubmit="autenticarUsuario(event)">
+        <label>Usuário ou PIN de Acesso:</label>
+        <input type="text" id="login-user" placeholder="Digite seu usuário" required>
+
+        <label>Senha:</label>
+        <input type="password" id="login-pass" placeholder="Digite sua senha" required>
+
+        <button type="submit" class="btn">ENTRAR NO SISTEMA</button>
+      </form>
+    </div>
+
+    <!-- TELA 2: SELEÇÃO OU CRIAÇÃO DE FAZENDA -->
+    <div id="screen-fazendas" class="card hidden">
+      <div class="header-bar">
+        <div>
+          <h2>Selecione a Propriedade</h2>
+          <p style="margin:0;">Escolha a estância de trabalho ou cadastre uma nova.</p>
+        </div>
+        <span class="badge" id="user-display">Operador</span>
+      </div>
+
+      <label>Fazendas Cadastradas:</label>
+      <select id="select-fazenda">
+        <option value="">-- Selecione uma Fazenda --</option>
+      </select>
+      
+      <button class="btn" onclick="entrarNaFazenda()">ACESSAR FAZENDA SELECIONADA</button>
+
+      <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
+
+      <h3>+ Cadastrar Nova Fazenda</h3>
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+        <div>
+          <label>Nome da Propriedade / Estância:</label>
+          <input type="text" id="new-fazenda-name" placeholder="Ex: Estância Pasto Recria">
+        </div>
+        <div>
+          <label>País / Operação:</label>
+          <select id="new-fazenda-pais">
+            <option value="Brasil">Brasil</option>
+            <option value="Paraguai">Paraguai</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="criarFazenda()">CRIAR PROPRIEDADE</button>
+    </div>
+
+    <!-- TELA 3: CENTRAL DE APLICATIVOS (HUB DE MÓDULOS) -->
+    <div id="screen-hub" class="card hidden">
+      <div class="header-bar">
+        <div>
+          <h2 id="current-fazenda-display">Estância Selecionada</h2>
+          <p style="margin:0;">Painel de Módulos Operacionais e Estratégicos</p>
+        </div>
+        <button class="btn btn-secondary" style="width: auto; margin:0; padding: 8px 15px;" onclick="trocarFazenda()">Trocar Fazenda</button>
+      </div>
+
+      <div class="modules-grid">
+        <!-- 1. CAMPO -->
+        <div class="module-card" onclick="abrirModulo('Campo')">
+          <span class="icon">📱</span>
+          <h3>App Campo</h3>
+          <p>Manejo diário, pesagens, suplementação e anotações do vaqueiro.</p>
         </div>
 
-        <div class="card" id="painelInttegra" style="background: var(--green-light); border-left: 5px solid #40916c;">
-          Resultados serão exibidos aqui.
-        </div>
-      </section>
-
-      <!-- TELA 2: RURAL ORÇAMENTO -->
-      <section id="orcamento" class="page">
-        <div class="card">
-          <h1>Rural Orçamento — Previsto vs. Realizado</h1>
-          <div class="grid-2">
-            <div>
-              <label>Selecione a Estância:</label>
-              <select id="selectEstancia" onchange="carregarOrcamento()">
-                <option value="estancia_1">Estância Recria / Pasto</option>
-                <option value="estancia_2">Estância Engorda / Confinamento</option>
-              </select>
-            </div>
-          </div>
+        <!-- 2. PLANEJA -->
+        <div class="module-card" onclick="abrirModulo('Planeja')">
+          <span class="icon">📐</span>
+          <h3>Planeja UA/ha</h3>
+          <p>Curva de sazonalidade ("avião"), capacidade de suporte e lotação.</p>
         </div>
 
-        <div class="card">
-          <table>
-            <thead>
-              <tr>
-                <th>Centro de Custos</th>
-                <th>Orçado (R$)</th>
-                <th>Realizado (R$)</th>
-                <th>Desvio (R$)</th>
-                <th>Variação (%)</th>
-              </tr>
-            </thead>
-            <tbody id="tabelaOrcamento"></tbody>
-          </table>
+        <!-- 3. PASTAGEM -->
+        <div class="module-card" onclick="abrirModulo('Pastagem')">
+          <span class="icon">🌿</span>
+          <h3>Rural Pastagem</h3>
+          <p>Gestão de lotes a pasto, recria de fêmeas e controle de piquetes.</p>
         </div>
-      </section>
-    </main>
+
+        <!-- 4. ENGORDA / CONFINADO -->
+        <div class="module-card" onclick="abrirModulo('Engorda')">
+          <span class="icon">🐂</span>
+          <h3>Rural Conf (Engorda)</h3>
+          <p>Confinamento de machos, ocupação de baias (160 cab) e abates.</p>
+        </div>
+
+        <!-- 5. ORÇAMENTO -->
+        <div class="module-card" onclick="abrirModulo('Orcamento')">
+          <span class="icon">📊</span>
+          <h3>Rural Orçamento</h3>
+          <p>Previsto vs. Realizado, centros de custos e métricas Inttegra (R$/@).</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    function mudarTela(telaId) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('sidebar button').forEach(b => b.classList.remove('active'));
-      document.getElementById(telaId).classList.add('active');
-      event.target.classList.add('active');
+    // ESTADO DA APLICAÇÃO
+    let usuarioLogado = null;
+    let fazendaAtual = null;
+
+    // BANCO DE DADOS LOCAL (LOCALSTORAGE)
+    let fazendas = JSON.parse(localStorage.getItem('pecuario_fazendas')) || [
+      { id: 1, nome: "Estância Recria (Brasil)", pais: "Brasil" },
+      { id: 2, nome: "Estância Confinamento (Paraguai)", pais: "Paraguai" }
+    ];
+
+    // 1. TELA DE LOGIN
+    function autenticarUsuario(e) {
+      e.preventDefault();
+      const user = document.getElementById('login-user').value;
+      usuarioLogado = user;
+      
+      document.getElementById('user-display').innerText = `Operador: ${user}`;
+      document.getElementById('screen-login').classList.add('hidden');
+      document.getElementById('screen-fazendas').classList.remove('hidden');
+      
+      atualizarListaFazendas();
     }
 
-    function calcularInttegra() {
-      const machos = parseFloat(document.getElementById('machos').value) || 0;
-      const femeas = parseFloat(document.getElementById('femeas').value) || 0;
-      const despesas = parseFloat(document.getElementById('despesas').value) || 0;
-      const gmdM = parseFloat(document.getElementById('gmdMacho').value) || 0;
-      const gmdF = parseFloat(document.getElementById('gmdFemea').value) || 0;
-      const cotacao = parseFloat(document.getElementById('precoArroba').value) || 0;
-
-      const totalAnimais = machos + femeas;
-      const totalArrobas = ((machos * gmdM * 30 * 0.54) + (femeas * gmdF * 30 * 0.52)) / 15;
-      const desembolsoCab = totalAnimais > 0 ? (despesas / totalAnimais) : 0;
-      const custeioArroba = totalArrobas > 0 ? (despesas / totalArrobas) : 0;
-      const margemVenda = cotacao > 0 ? (((cotacao - custeioArroba) / cotacao) * 100) : 0;
-
-      document.getElementById('painelInttegra').innerHTML = `
-        <p><strong>Arrobas Produzidas:</strong> ${totalArrobas.toFixed(1)} @</p>
-        <p><strong>Desembolso Cab/Mês:</strong> R$ ${desembolsoCab.toFixed(2)} (Meta Inttegra: R$ 84,71 - R$ 96,61)</p>
-        <p><strong>Custeio por @ Produzida:</strong> R$ ${custeioArroba.toFixed(2)} / @ (Top Rentáveis: R$ 161,25 / @)</p>
-        <p><strong>Margem sobre Venda (MSV):</strong> ${margemVenda.toFixed(1)}% (Meta Inttegra: > 47,9%)</p>
-      `;
-    }
-
-    const dadosOrcamento = {
-      estancia_1: [
-        { categoria: "Suplementação & Sal", orcado: 45000, realizado: 48200 },
-        { categoria: "Mão de Obra", orcado: 18000, realizado: 17500 },
-        { categoria: "Arrendamento / Pasto", orcado: 12000, realizado: 12000 }
-      ],
-      estancia_2: [
-        { categoria: "Ração Confinamento", orcado: 120000, realizado: 115000 },
-        { categoria: "Mão de Obra", orcado: 22000, realizado: 22000 }
-      ]
-    };
-
-    function carregarOrcamento() {
-      const estancia = document.getElementById('selectEstancia').value;
-      const itens = dadosOrcamento[estancia] || [];
-      const tbody = document.getElementById('tabelaOrcamento');
-      let html = '';
-
-      itens.forEach(item => {
-        const desvio = item.realizado - item.orcado;
-        const pct = item.orcado > 0 ? (desvio / item.orcado) * 100 : 0;
-        const cls = desvio <= 0 ? 'badge-ok' : 'badge-alert';
-        html += `
-          <tr>
-            <td><strong>${item.categoria}</strong></td>
-            <td>R$ ${item.orcado.toLocaleString('pt-BR')}</td>
-            <td>R$ ${item.realizado.toLocaleString('pt-BR')}</td>
-            <td class="${cls}">R$ ${desvio.toLocaleString('pt-BR')}</td>
-            <td class="${cls}">${pct > 0 ? '+' : ''}${pct.toFixed(1)}%</td>
-          </tr>`;
+    // 2. CRIAÇÃO E SELEÇÃO DE FAZENDAS
+    function atualizarListaFazendas() {
+      const select = document.getElementById('select-fazenda');
+      select.innerHTML = '<option value="">-- Selecione uma Fazenda --</option>';
+      fazendas.forEach(f => {
+        select.innerHTML += `<option value="${f.id}">${f.nome} (${f.pais})</option>`;
       });
-      tbody.innerHTML = html;
+      localStorage.setItem('pecuario_fazendas', JSON.stringify(fazendas));
     }
 
-    carregarOrcamento();
+    function criarFazenda() {
+      const nome = document.getElementById('new-fazenda-name').value;
+      const pais = document.getElementById('new-fazenda-pais').value;
+
+      if (!nome) {
+        alert("Digite o nome da fazenda.");
+        return;
+      }
+
+      const nova = { id: Date.now(), nome: nome, pais: pais };
+      fazendas.push(nova);
+      atualizarListaFazendas();
+      document.getElementById('new-fazenda-name').value = '';
+      alert("Fazenda criada com sucesso!");
+    }
+
+    function entrarNaFazenda() {
+      const id = document.getElementById('select-fazenda').value;
+      if (!id) {
+        alert("Selecione uma fazenda para continuar.");
+        return;
+      }
+
+      fazendaAtual = fazendas.find(f => f.id == id);
+      document.getElementById('current-fazenda-display').innerText = `🚜 ${fazendaAtual.nome}`;
+      
+      document.getElementById('screen-fazendas').classList.add('hidden');
+      document.getElementById('screen-hub').classList.remove('hidden');
+    }
+
+    function trocarFazenda() {
+      document.getElementById('screen-hub').classList.add('hidden');
+      document.getElementById('screen-fazendas').classList.remove('hidden');
+    }
+
+    // 3. SELEÇÃO DE MÓDULOS
+    function abrirModulo(modulo) {
+      alert(`Abrindo o módulo: ${modulo} da ${fazendaAtual.nome}`);
+      // Aqui conectaremos as telas operacionais detalhadas no próximo passo!
+    }
   </script>
 
 </body>
