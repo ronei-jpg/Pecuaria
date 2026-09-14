@@ -41,9 +41,8 @@
     }
 
     h1, h2, h3 { color: var(--green-dark); margin-top: 0; }
-    p { color: #555; font-size: 14px; }
 
-    label { font-size: 12px; font-weight: bold; color: var(--green-medium); display: block; margin-top: 12px; }
+    label { font-size: 13px; font-weight: bold; color: var(--green-medium); display: block; margin-top: 12px; }
     input, select { 
       width: 100%; 
       padding: 12px; 
@@ -64,38 +63,39 @@
       font-weight: bold; 
       font-size: 15px; 
       cursor: pointer; 
-      margin-top: 20px; 
-      transition: background 0.2s;
+      margin-top: 15px; 
     }
     .btn:hover { background: var(--green-medium); }
     .btn-secondary { background: #6c757d; }
     .btn-secondary:hover { background: #5a6268; }
 
-    /* GRID DOS MÓDULOS */
+    /* LAYOUT DOS MÓDULOS ENCAIXADOS (5 ITENS) */
     .modules-grid { 
       display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+      grid-template-columns: repeat(3, 1fr); 
       gap: 15px; 
       margin-top: 20px; 
     }
-
+    
     .module-card { 
       background: #f8faf8; 
       border: 2px solid var(--green-light); 
-      padding: 20px; 
+      padding: 25px 15px; 
       border-radius: 10px; 
       cursor: pointer; 
       text-align: center; 
       transition: all 0.2s; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     .module-card:hover { 
       border-color: var(--green-medium); 
-      transform: translateY(-3px); 
       background: white; 
     }
-    .module-card .icon { font-size: 32px; margin-bottom: 10px; display: block; }
-    .module-card h3 { font-size: 16px; margin: 5px 0; }
-    .module-card p { font-size: 12px; margin: 0; }
+    .module-card .icon { font-size: 36px; margin-bottom: 8px; }
+    .module-card h3 { font-size: 16px; margin: 0; }
 
     .header-bar {
       display: flex;
@@ -105,14 +105,22 @@
       padding-bottom: 15px;
       margin-bottom: 20px;
     }
-    .badge {
-      background: var(--green-light);
-      color: var(--green-dark);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #eee;
     }
+    .checkbox-group label { margin: 0; font-weight: normal; cursor: pointer; }
+
+    .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+    .tab-btn { flex: 1; padding: 10px; background: #e9ecef; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: #495057; }
+    .tab-btn.active { background: var(--green-dark); color: white; }
 
     .hidden { display: none !important; }
   </style>
@@ -121,103 +129,127 @@
 
   <div class="container">
 
-    <!-- TELA 1: AUTENTICAÇÃO / LOGIN -->
-    <div id="screen-login" class="card">
-      <h1 style="text-align: center;">🚜 SISTEMA UNIFICADO DE GESTÃO PECUÁRIA</h1>
-      <p style="text-align: center;">Acesso Privado & Offline</p>
-      <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+    <!-- TELA DE LOGIN / CADASTRO DE DONO -->
+    <div id="screen-auth" class="card">
+      <h1 style="text-align: center;">SISTEMA UNIFICADO DE GESTÃO PECUÁRIA</h1>
+      
+      <div class="tabs">
+        <button class="tab-btn active" id="tab-login" onclick="alternarAbaAuth('login')">Entrar</button>
+        <button class="tab-btn" id="tab-register" onclick="alternarAbaAuth('register')">Criar Conta (Dono)</button>
+      </div>
 
-      <form id="form-login" onsubmit="autenticarUsuario(event)">
-        <label>Usuário ou PIN de Acesso:</label>
-        <input type="text" id="login-user" placeholder="Digite seu usuário" required>
-
+      <!-- FORMULÁRIO DE LOGIN -->
+      <form id="form-login" onsubmit="realizarLogin(event)">
+        <label>Usuário:</label>
+        <input type="text" id="login-user" required placeholder="Digite seu usuário">
         <label>Senha:</label>
-        <input type="password" id="login-pass" placeholder="Digite sua senha" required>
+        <input type="password" id="login-pass" required placeholder="Digite sua senha">
+        <button type="submit" class="btn">ENTRAR</button>
+      </form>
 
-        <button type="submit" class="btn">ENTRAR NO SISTEMA</button>
+      <!-- FORMULÁRIO DE CADASTRO DONO -->
+      <form id="form-register" class="hidden" onsubmit="cadastrarDono(event)">
+        <label>Nome Completo ou Razão Social:</label>
+        <input type="text" id="reg-name" required placeholder="Ex: João da Silva">
+        <label>Usuário Principal (Administrador):</label>
+        <input type="text" id="reg-user" required placeholder="Ex: joao.dono">
+        <label>Senha:</label>
+        <input type="password" id="reg-pass" required placeholder="Crie uma senha">
+        <button type="submit" class="btn">CRIAR CONTA</button>
       </form>
     </div>
 
-    <!-- TELA 2: SELEÇÃO OU CRIAÇÃO DE FAZENDA -->
+    <!-- TELA DE GESTÃO DE FAZENDAS E USUÁRIOS -->
     <div id="screen-fazendas" class="card hidden">
       <div class="header-bar">
         <div>
-          <h2>Selecione a Propriedade</h2>
-          <p style="margin:0;">Escolha a estância de trabalho ou cadastre uma nova.</p>
+          <h2>Seleção de Propriedade</h2>
+          <span id="user-display" style="font-size: 13px; color: #666;">Operador</span>
         </div>
-        <span class="badge" id="user-display">Operador</span>
+        <button class="btn btn-secondary" style="width: auto; margin:0; padding: 8px 15px;" onclick="sair()">Sair</button>
       </div>
 
-      <label>Fazendas Cadastradas:</label>
+      <label>Escolha a Fazenda:</label>
       <select id="select-fazenda">
-        <option value="">-- Selecione uma Fazenda --</option>
+        <option value="">-- Nenhuma fazenda cadastrada --</option>
       </select>
-      
-      <button class="btn" onclick="entrarNaFazenda()">ACESSAR FAZENDA SELECIONADA</button>
+      <button class="btn" onclick="acessarFazenda()">ENTRAR NA FAZENDA</button>
 
-      <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
-
-      <h3>+ Cadastrar Nova Fazenda</h3>
-      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
-        <div>
-          <label>Nome da Propriedade / Estância:</label>
-          <input type="text" id="new-fazenda-name" placeholder="Ex: Estância Pasto Recria">
-        </div>
-        <div>
-          <label>País / Operação:</label>
+      <!-- ÁREA EXCLUSIVA DO DONO -->
+      <div id="area-admin" class="hidden" style="margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px;">
+        <h3>Administração da Conta</h3>
+        
+        <!-- CRIAR FAZENDA -->
+        <div style="margin-bottom: 25px;">
+          <label>Nome da Nova Fazenda:</label>
+          <input type="text" id="new-fazenda-name" placeholder="Ex: Estância Recria">
+          <label>País:</label>
           <select id="new-fazenda-pais">
             <option value="Brasil">Brasil</option>
             <option value="Paraguai">Paraguai</option>
           </select>
+          <button class="btn btn-secondary" onclick="criarFazenda()">Cadastrar Fazenda</button>
+        </div>
+
+        <!-- CRIAR SUBLOGIN DE FUNCIONÁRIO -->
+        <div>
+          <h4 style="margin-bottom: 5px;">Cadastrar Sublogin (Funcionário)</h4>
+          <label>Nome do Funcionário:</label>
+          <input type="text" id="sub-name" placeholder="Ex: Pedro Vaqueiro">
+          <label>Usuário de Acesso:</label>
+          <input type="text" id="sub-user" placeholder="Ex: pedro.campo">
+          <label>Senha:</label>
+          <input type="password" id="sub-pass" placeholder="Senha do funcionário">
+          
+          <label>Vincular à Fazenda:</label>
+          <select id="sub-fazenda-select"></select>
+
+          <label>Permissão de Acesso aos Aplicativos:</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" value="Campo" class="sub-perm"> Campo</label>
+            <label><input type="checkbox" value="Planeja" class="sub-perm"> Planeja UA/ha</label>
+            <label><input type="checkbox" value="Pastagem" class="sub-perm"> Pastagem</label>
+            <label><input type="checkbox" value="Engorda" class="sub-perm"> Engorda</label>
+            <label><input type="checkbox" value="Orcamento" class="sub-perm"> Orçamento</label>
+          </div>
+          <button class="btn btn-secondary" onclick="criarSublogin()">Cadastrar Funcionário</button>
         </div>
       </div>
-      <button class="btn btn-secondary" onclick="criarFazenda()">CRIAR PROPRIEDADE</button>
     </div>
 
-    <!-- TELA 3: CENTRAL DE APLICATIVOS (HUB DE MÓDULOS) -->
+    <!-- CENTRAL DE APLICATIVOS (HUB) -->
     <div id="screen-hub" class="card hidden">
       <div class="header-bar">
         <div>
-          <h2 id="current-fazenda-display">Estância Selecionada</h2>
-          <p style="margin:0;">Painel de Módulos Operacionais e Estratégicos</p>
+          <h2 id="current-fazenda-display">Fazenda</h2>
         </div>
-        <button class="btn btn-secondary" style="width: auto; margin:0; padding: 8px 15px;" onclick="trocarFazenda()">Trocar Fazenda</button>
+        <button class="btn btn-secondary" style="width: auto; margin:0; padding: 8px 15px;" onclick="voltarParaFazendas()">Trocar Fazenda</button>
       </div>
 
-      <div class="modules-grid">
-        <!-- 1. CAMPO -->
-        <div class="module-card" onclick="abrirModulo('Campo')">
+      <div class="modules-grid" id="container-modulos">
+        <div class="module-card" id="app-Campo" onclick="abrirModulo('Campo')">
           <span class="icon">📱</span>
-          <h3>App Campo</h3>
-          <p>Manejo diário, pesagens, suplementação e anotações do vaqueiro.</p>
+          <h3>Campo</h3>
         </div>
 
-        <!-- 2. PLANEJA -->
-        <div class="module-card" onclick="abrirModulo('Planeja')">
+        <div class="module-card" id="app-Planeja" onclick="abrirModulo('Planeja')">
           <span class="icon">📐</span>
           <h3>Planeja UA/ha</h3>
-          <p>Curva de sazonalidade ("avião"), capacidade de suporte e lotação.</p>
         </div>
 
-        <!-- 3. PASTAGEM -->
-        <div class="module-card" onclick="abrirModulo('Pastagem')">
+        <div class="module-card" id="app-Pastagem" onclick="abrirModulo('Pastagem')">
           <span class="icon">🌿</span>
-          <h3>Rural Pastagem</h3>
-          <p>Gestão de lotes a pasto, recria de fêmeas e controle de piquetes.</p>
+          <h3>Pastagem</h3>
         </div>
 
-        <!-- 4. ENGORDA / CONFINADO -->
-        <div class="module-card" onclick="abrirModulo('Engorda')">
+        <div class="module-card" id="app-Engorda" onclick="abrirModulo('Engorda')">
           <span class="icon">🐂</span>
-          <h3>Rural Conf (Engorda)</h3>
-          <p>Confinamento de machos, ocupação de baias (160 cab) e abates.</p>
+          <h3>Engorda</h3>
         </div>
 
-        <!-- 5. ORÇAMENTO -->
-        <div class="module-card" onclick="abrirModulo('Orcamento')">
+        <div class="module-card" id="app-Orcamento" onclick="abrirModulo('Orcamento')">
           <span class="icon">📊</span>
-          <h3>Rural Orçamento</h3>
-          <p>Previsto vs. Realizado, centros de custos e métricas Inttegra (R$/@).</p>
+          <h3>Orçamento</h3>
         </div>
       </div>
     </div>
@@ -225,80 +257,206 @@
   </div>
 
   <script>
-    // ESTADO DA APLICAÇÃO
+    // ESTRUTURA DE DADOS NO LOCALSTORAGE
+    let usuarios = JSON.parse(localStorage.getItem('pec_usuarios')) || [];
+    let fazendas = JSON.parse(localStorage.getItem('pec_fazendas')) || [];
     let usuarioLogado = null;
-    let fazendaAtual = null;
+    let fazendaSelecionada = null;
 
-    // BANCO DE DADOS LOCAL (LOCALSTORAGE)
-    let fazendas = JSON.parse(localStorage.getItem('pecuario_fazendas')) || [
-      { id: 1, nome: "Estância Recria (Brasil)", pais: "Brasil" },
-      { id: 2, nome: "Estância Confinamento (Paraguai)", pais: "Paraguai" }
-    ];
-
-    // 1. TELA DE LOGIN
-    function autenticarUsuario(e) {
-      e.preventDefault();
-      const user = document.getElementById('login-user').value;
-      usuarioLogado = user;
-      
-      document.getElementById('user-display').innerText = `Operador: ${user}`;
-      document.getElementById('screen-login').classList.add('hidden');
-      document.getElementById('screen-fazendas').classList.remove('hidden');
-      
-      atualizarListaFazendas();
+    function alternarAbaAuth(aba) {
+      document.getElementById('tab-login').classList.toggle('active', aba === 'login');
+      document.getElementById('tab-register').classList.toggle('active', aba === 'register');
+      document.getElementById('form-login').classList.toggle('hidden', aba !== 'login');
+      document.getElementById('form-register').classList.toggle('hidden', aba !== 'register');
     }
 
-    // 2. CRIAÇÃO E SELEÇÃO DE FAZENDAS
-    function atualizarListaFazendas() {
+    function cadastrarDono(e) {
+      e.preventDefault();
+      const user = document.getElementById('reg-user').value.trim();
+      const pass = document.getElementById('reg-pass').value.trim();
+      const name = document.getElementById('reg-name').value.trim();
+
+      if (usuarios.find(u => u.user === user)) {
+        alert("Este nome de usuário já existe.");
+        return;
+      }
+
+      const novoDono = {
+        id: Date.now(),
+        tipo: 'dono',
+        nome: name,
+        user: user,
+        pass: pass,
+        donoId: null
+      };
+
+      usuarios.push(novoDono);
+      localStorage.setItem('pec_usuarios', JSON.stringify(usuarios));
+      alert("Conta de administrador criada! Faça login para continuar.");
+      alternarAbaAuth('login');
+      document.getElementById('login-user').value = user;
+    }
+
+    function realizarLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('login-user').value.trim();
+      const pass = document.getElementById('login-pass').value.trim();
+
+      const conta = usuarios.find(u => u.user === user && u.pass === pass);
+
+      if (!conta) {
+        alert("Usuário ou senha incorretos.");
+        return;
+      }
+
+      usuarioLogado = conta;
+      carregarPainelFazendas();
+    }
+
+    function carregarPainelFazendas() {
+      document.getElementById('screen-auth').classList.add('hidden');
+      document.getElementById('screen-fazendas').classList.remove('hidden');
+      document.getElementById('user-display').innerText = `Usuário: ${usuarioLogado.nome} (${usuarioLogado.tipo.toUpperCase()})`;
+
+      const isDono = usuarioLogado.tipo === 'dono';
+      document.getElementById('area-admin').classList.toggle('hidden', !isDono);
+
+      atualizarSelectFazendas();
+    }
+
+    function atualizarSelectFazendas() {
       const select = document.getElementById('select-fazenda');
-      select.innerHTML = '<option value="">-- Selecione uma Fazenda --</option>';
-      fazendas.forEach(f => {
-        select.innerHTML += `<option value="${f.id}">${f.nome} (${f.pais})</option>`;
-      });
-      localStorage.setItem('pecuario_fazendas', JSON.stringify(fazendas));
+      const subSelect = document.getElementById('sub-fazenda-select');
+      select.innerHTML = '';
+
+      let fazendasPermitidas = [];
+
+      if (usuarioLogado.tipo === 'dono') {
+        fazendasPermitidas = fazendas.filter(f => f.donoId === usuarioLogado.id);
+      } else {
+        fazendasPermitidas = fazendas.filter(f => f.id === usuarioLogado.fazendaId);
+      }
+
+      if (fazendasPermitidas.length === 0) {
+        select.innerHTML = '<option value="">-- Nenhuma fazenda encontrada --</option>';
+      } else {
+        fazendasPermitidas.forEach(f => {
+          select.innerHTML += `<option value="${f.id}">${f.nome} (${f.pais})</option>`;
+        });
+      }
+
+      if (subSelect) {
+        subSelect.innerHTML = '';
+        fazendasPermitidas.forEach(f => {
+          subSelect.innerHTML += `<option value="${f.id}">${f.nome}</option>`;
+        });
+      }
     }
 
     function criarFazenda() {
-      const nome = document.getElementById('new-fazenda-name').value;
+      const nome = document.getElementById('new-fazenda-name').value.trim();
       const pais = document.getElementById('new-fazenda-pais').value;
 
       if (!nome) {
-        alert("Digite o nome da fazenda.");
+        alert("Informe o nome da fazenda.");
         return;
       }
 
-      const nova = { id: Date.now(), nome: nome, pais: pais };
+      const nova = {
+        id: Date.now(),
+        donoId: usuarioLogado.id,
+        nome: nome,
+        pais: pais
+      };
+
       fazendas.push(nova);
-      atualizarListaFazendas();
+      localStorage.setItem('pec_fazendas', JSON.stringify(fazendas));
       document.getElementById('new-fazenda-name').value = '';
-      alert("Fazenda criada com sucesso!");
+      atualizarSelectFazendas();
+      alert("Fazenda cadastrada.");
     }
 
-    function entrarNaFazenda() {
-      const id = document.getElementById('select-fazenda').value;
-      if (!id) {
-        alert("Selecione uma fazenda para continuar.");
+    function criarSublogin() {
+      const nome = document.getElementById('sub-name').value.trim();
+      const user = document.getElementById('sub-user').value.trim();
+      const pass = document.getElementById('sub-pass').value.trim();
+      const fazendaId = Number(document.getElementById('sub-fazenda-select').value);
+
+      const checkboxes = document.querySelectorAll('.sub-perm:checked');
+      const permissoes = Array.from(checkboxes).map(c => c.value);
+
+      if (!nome || !user || !pass || !fazendaId) {
+        alert("Preencha todos os campos do funcionário.");
         return;
       }
 
-      fazendaAtual = fazendas.find(f => f.id == id);
-      document.getElementById('current-fazenda-display').innerText = `🚜 ${fazendaAtual.nome}`;
+      if (usuarios.find(u => u.user === user)) {
+        alert("Nome de usuário já está em uso.");
+        return;
+      }
+
+      const novoSub = {
+        id: Date.now(),
+        tipo: 'funcionario',
+        donoId: usuarioLogado.id,
+        nome: nome,
+        user: user,
+        pass: pass,
+        fazendaId: fazendaId,
+        permissoes: permissoes
+      };
+
+      usuarios.push(novoSub);
+      localStorage.setItem('pec_usuarios', JSON.stringify(usuarios));
       
+      document.getElementById('sub-name').value = '';
+      document.getElementById('sub-user').value = '';
+      document.getElementById('sub-pass').value = '';
+      alert("Funcionário cadastrado.");
+    }
+
+    function acessarFazenda() {
+      const id = Number(document.getElementById('select-fazenda').value);
+      if (!id) {
+        alert("Selecione uma fazenda.");
+        return;
+      }
+
+      fazendaSelecionada = fazendas.find(f => f.id === id);
+      document.getElementById('current-fazenda-display').innerText = fazendaSelecionada.nome;
+
+      // Filtrar Aplicativos Liberados
+      const modulos = ['Campo', 'Planeja', 'Pastagem', 'Engorda', 'Orcamento'];
+      
+      modulos.forEach(mod => {
+        const el = document.getElementById(`app-${mod}`);
+        if (usuarioLogado.tipo === 'dono') {
+          el.classList.remove('hidden');
+        } else {
+          const liberado = usuarioLogado.permissoes.includes(mod);
+          el.classList.toggle('hidden', !liberado);
+        }
+      });
+
       document.getElementById('screen-fazendas').classList.add('hidden');
       document.getElementById('screen-hub').classList.remove('hidden');
     }
 
-    function trocarFazenda() {
+    function voltarParaFazendas() {
       document.getElementById('screen-hub').classList.add('hidden');
       document.getElementById('screen-fazendas').classList.remove('hidden');
     }
 
-    // 3. SELEÇÃO DE MÓDULOS
+    function sair() {
+      usuarioLogado = null;
+      fazendaSelecionada = null;
+      document.getElementById('screen-fazendas').classList.add('hidden');
+      document.getElementById('screen-auth').classList.remove('hidden');
+    }
+
     function abrirModulo(modulo) {
-      alert(`Abrindo o módulo: ${modulo} da ${fazendaAtual.nome}`);
-      // Aqui conectaremos as telas operacionais detalhadas no próximo passo!
+      alert(`Abrindo módulo: ${modulo}`);
     }
   </script>
-
 </body>
 </html>
