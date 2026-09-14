@@ -69,7 +69,6 @@
     .btn-secondary { background: #5a6268; }
     .btn-secondary:hover { background: #495057; }
 
-    /* LAYOUT DOS MÓDULOS NO HUB */
     .modules-grid { 
       display: grid; 
       grid-template-columns: repeat(3, 1fr); 
@@ -122,6 +121,14 @@
     .tab-btn { flex: 1; padding: 12px; background: #e9ecef; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: #495057; }
     .tab-btn.active { background: var(--green-dark); color: white; }
 
+    .section-box {
+      background: #fdfdfd; 
+      padding: 20px; 
+      border-radius: 8px; 
+      border: 1px solid #eee;
+      margin-bottom: 25px;
+    }
+
     .hidden { display: none !important; }
   </style>
 </head>
@@ -147,10 +154,10 @@
         <button type="submit" class="btn">ENTRAR</button>
       </form>
 
-      <!-- FORMULÁRIO DE NOVO CADASTRO -->
+      <!-- FORMULÁRIO DE CADASTRO -->
       <form id="form-register" class="hidden" onsubmit="cadastrarUsuarioInicial(event)">
-        <label>Nome Completo / Organização:</label>
-        <input type="text" id="reg-name" required placeholder="Identificação da conta">
+        <label>Organização:</label>
+        <input type="text" id="reg-name" required placeholder="Nome do grupo ou fazenda principal">
         <label>Usuário:</label>
         <input type="text" id="reg-user" required placeholder="Nome de usuário para login">
         <label>Senha:</label>
@@ -159,12 +166,12 @@
       </form>
     </div>
 
-    <!-- TELA 2: SELEÇÃO DE FAZENDA -->
+    <!-- TELA 2: SELEÇÃO DE PROPRIEDADE -->
     <div id="screen-fazendas" class="card hidden">
       <div class="header-bar">
         <div>
           <h2>Seleção de Propriedade</h2>
-          <span id="user-display" style="font-size: 13px; color: #666;">Operador</span>
+          <span id="user-display" style="font-size: 13px; color: #666;">Usuário: -</span>
         </div>
         <button class="btn btn-secondary" style="width: auto; margin:0; padding: 8px 15px;" onclick="sair()">Encerrar Sessão</button>
       </div>
@@ -174,10 +181,9 @@
         <option value="">-- Nenhuma propriedade cadastrada --</option>
       </select>
       <button class="btn" onclick="acessarFazenda()">ACESSAR PROPRIEDADE</button>
-      <button class="btn btn-secondary" id="btn-ir-config-direto" onclick="abrirConfiguracoesDireto()">GERENCIAR SISTEMA / PROPRIEDADES</button>
     </div>
 
-    <!-- TELA 3: CENTRAL DE APLICATIVOS (HUB DE MÓDULOS) -->
+    <!-- TELA 3: HUB DE MÓDULOS -->
     <div id="screen-hub" class="card hidden">
       <div class="header-bar">
         <div>
@@ -197,7 +203,7 @@
 
         <div class="module-card" id="app-Planeja" onclick="abrirModulo('Planeja')">
           <span class="icon">📐</span>
-          <h3>Planeja UA/ha</h3>
+          <h3>Planeja</h3>
         </div>
 
         <div class="module-card" id="app-Pastagem" onclick="abrirModulo('Pastagem')">
@@ -222,18 +228,36 @@
       </div>
     </div>
 
-    <!-- TELA 4: MÓDULO DE CONFIGURAÇÕES (ADMINISTRAÇÃO DE PROPRIEDADES E USUÁRIOS) -->
+    <!-- TELA 4: CONFIGURAÇÕES -->
     <div id="screen-config" class="card hidden">
       <div class="header-bar">
         <div>
-          <h2>Módulo de Configurações</h2>
-          <p style="margin:0;">Gestão de Propriedades, Usuários e Permissões</p>
+          <h2>Configurações</h2>
+          <p style="margin:0;">Administração de Propriedades, Usuários e Dados da Conta</p>
         </div>
         <button class="btn btn-secondary" style="width: auto; margin:0; padding: 8px 15px;" onclick="fecharConfiguracoes()">Voltar ao Painel</button>
       </div>
 
-      <!-- CADASTRAR FAZENDA -->
-      <div style="margin-bottom: 30px; background: #fdfdfd; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+      <!-- EDITAR DADOS / SEGURANÇA -->
+      <div class="section-box">
+        <h3>Alterar Senha e Organização</h3>
+        <label>Organização:</label>
+        <input type="text" id="cfg-edit-org">
+        <label>Nova Senha:</label>
+        <input type="password" id="cfg-edit-pass" placeholder="Digite uma nova senha para alterar">
+        <button class="btn" onclick="atualizarDadosConta()">SALVAR ALTERAÇÕES DA CONTA</button>
+      </div>
+
+      <!-- EDITAR PROPRIEDADE SELECIONADA -->
+      <div class="section-box">
+        <h3>Editar Propriedade Atual</h3>
+        <label>Nome da Propriedade:</label>
+        <input type="text" id="cfg-edit-fazenda-nome">
+        <button class="btn btn-secondary" onclick="atualizarNomeFazenda()">ATUALIZAR NOME DA PROPRIEDADE</button>
+      </div>
+
+      <!-- CADASTRAR PROPRIEDADE -->
+      <div class="section-box">
         <h3>Cadastrar Nova Propriedade</h3>
         <label>Nome da Propriedade:</label>
         <input type="text" id="cfg-fazenda-nome" placeholder="Nome da fazenda ou estância">
@@ -242,23 +266,23 @@
           <option value="Brasil">Brasil</option>
           <option value="Paraguai">Paraguai</option>
         </select>
-        <button class="btn" style="margin-top: 15px;" onclick="salvarFazenda()">CADASTRAR PROPRIEDADE</button>
+        <button class="btn" onclick="salvarFazenda()">CADASTRAR PROPRIEDADE</button>
       </div>
 
-      <!-- CADASTRAR USUÁRIO DA PROPRIEDADE -->
-      <div style="background: #fdfdfd; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+      <!-- CADASTRAR USUÁRIO -->
+      <div class="section-box">
         <h3>Cadastrar Usuário / Sublogin</h3>
-        <label>Nome Completo:</label>
-        <input type="text" id="cfg-user-nome" placeholder="Nome do usuário">
+        <label>Organização / Nome:</label>
+        <input type="text" id="cfg-user-nome" placeholder="Nome do usuário ou funcionário">
         <label>Usuário de Acesso:</label>
         <input type="text" id="cfg-user-login" placeholder="Nome de usuário para o login">
         <label>Senha:</label>
-        <input type="password" id="cfg-user-pass" placeholder="Senha do usuário">
+        <input type="password" id="cfg-user-pass" placeholder="Senha de acesso">
         
-        <label>Nível de Perfil:</label>
+        <label>Cargo:</label>
         <select id="cfg-user-perfil">
           <option value="funcionario">Funcionário</option>
-          <option value="admin">Administrador</option>
+          <option value="dono">Dono (Administrador)</option>
         </select>
 
         <label>Vincular à Propriedade:</label>
@@ -267,12 +291,12 @@
         <label>Permissões aos Aplicativos:</label>
         <div class="checkbox-group">
           <label><input type="checkbox" value="Campo" class="cfg-perm"> Campo</label>
-          <label><input type="checkbox" value="Planeja" class="cfg-perm"> Planeja UA/ha</label>
+          <label><input type="checkbox" value="Planeja" class="cfg-perm"> Planeja</label>
           <label><input type="checkbox" value="Pastagem" class="cfg-perm"> Pastagem</label>
           <label><input type="checkbox" value="Engorda" class="cfg-perm"> Engorda</label>
           <label><input type="checkbox" value="Orcamento" class="cfg-perm"> Orçamento</label>
         </div>
-        <button class="btn" style="margin-top: 15px;" onclick="salvarUsuarioSub()">CADASTRAR USUÁRIO</button>
+        <button class="btn" onclick="salvarUsuarioSub()">CADASTRAR USUÁRIO</button>
       </div>
     </div>
 
@@ -304,11 +328,10 @@
 
       const novo = {
         id: Date.now(),
-        tipo: 'admin',
+        tipo: 'dono',
         nome: name,
         user: user,
-        pass: pass,
-        adminId: null
+        pass: pass
       };
 
       usuarios.push(novo);
@@ -340,7 +363,7 @@
       document.getElementById('screen-hub').classList.add('hidden');
       document.getElementById('screen-config').classList.add('hidden');
       
-      document.getElementById('user-display').innerText = `Usuário: ${usuarioLogado.nome}`;
+      document.getElementById('user-display').innerText = `Organização/Usuário: ${usuarioLogado.nome}`;
 
       atualizarSelectFazendas();
     }
@@ -351,7 +374,7 @@
       select.innerHTML = '';
 
       let permitidas = [];
-      if (usuarioLogado.tipo === 'admin') {
+      if (usuarioLogado.tipo === 'dono' || usuarioLogado.tipo === 'admin') {
         permitidas = fazendas;
       } else {
         permitidas = fazendas.filter(f => f.id === usuarioLogado.fazendaId);
@@ -383,14 +406,14 @@
       fazendaSelecionada = fazendas.find(f => f.id === id);
       document.getElementById('current-fazenda-display').innerText = fazendaSelecionada.nome;
 
-      const isAdmin = usuarioLogado.tipo === 'admin';
-      document.getElementById('btn-config-hub').classList.toggle('hidden', !isAdmin);
-      document.getElementById('app-Configuracoes').classList.toggle('hidden', !isAdmin);
+      const isDono = usuarioLogado.tipo === 'dono' || usuarioLogado.tipo === 'admin';
+      document.getElementById('btn-config-hub').classList.toggle('hidden', !isDono);
+      document.getElementById('app-Configuracoes').classList.toggle('hidden', !isDono);
 
       const modulos = ['Campo', 'Planeja', 'Pastagem', 'Engorda', 'Orcamento'];
       modulos.forEach(mod => {
         const el = document.getElementById(`app-${mod}`);
-        if (isAdmin) {
+        if (isDono) {
           el.classList.remove('hidden');
         } else {
           const liberado = usuarioLogado.permissoes && usuarioLogado.permissoes.includes(mod);
@@ -400,17 +423,6 @@
 
       document.getElementById('screen-fazendas').classList.add('hidden');
       document.getElementById('screen-hub').classList.remove('hidden');
-    }
-
-    function abrirConfiguracoesDireto() {
-      if (usuarioLogado.tipo !== 'admin') {
-        alert("Acesso restrito a administradores.");
-        return;
-      }
-      atualizarSelectFazendas();
-      document.getElementById('screen-fazendas').classList.add('hidden');
-      document.getElementById('screen-hub').classList.add('hidden');
-      document.getElementById('screen-config').classList.remove('hidden');
     }
 
     function fecharConfiguracoes() {
@@ -441,7 +453,7 @@
       localStorage.setItem('pec_fazendas', JSON.stringify(fazendas));
       document.getElementById('cfg-fazenda-nome').value = '';
       atualizarSelectFazendas();
-      alert("Propriedade cadastrada com sucesso.");
+      alert("Propriedade cadastrada.");
     }
 
     function salvarUsuarioSub() {
@@ -455,12 +467,12 @@
       const permissoes = Array.from(checkboxes).map(c => c.value);
 
       if (!nome || !user || !pass) {
-        alert("Preencha todos os campos do formulário.");
+        alert("Preencha todos os campos.");
         return;
       }
 
       if (usuarios.find(u => u.user === user)) {
-        alert("Este nome de usuário já está em uso.");
+        alert("Usuário já cadastrado.");
         return;
       }
 
@@ -480,7 +492,44 @@
       document.getElementById('cfg-user-nome').value = '';
       document.getElementById('cfg-user-login').value = '';
       document.getElementById('cfg-user-pass').value = '';
-      alert("Usuário cadastrado com sucesso.");
+      alert("Usuário cadastrado.");
+    }
+
+    function atualizarDadosConta() {
+      const novaOrg = document.getElementById('cfg-edit-org').value.trim();
+      const novaPass = document.getElementById('cfg-edit-pass').value.trim();
+
+      if (novaOrg) usuarioLogado.nome = novaOrg;
+      if (novaPass) usuarioLogado.pass = novaPass;
+
+      const idx = usuarios.findIndex(u => u.id === usuarioLogado.id);
+      if (idx !== -1) {
+        usuarios[idx] = usuarioLogado;
+        localStorage.setItem('pec_usuarios', JSON.stringify(usuarios));
+      }
+
+      document.getElementById('user-display').innerText = `Organização/Usuário: ${usuarioLogado.nome}`;
+      alert("Dados da conta atualizados.");
+    }
+
+    function atualizarNomeFazenda() {
+      if (!fazendaSelecionada) {
+        alert("Selecione uma propriedade primeiro.");
+        return;
+      }
+
+      const novoNome = document.getElementById('cfg-edit-fazenda-nome').value.trim();
+      if (!novoNome) return;
+
+      fazendaSelecionada.nome = novoNome;
+      const idx = fazendas.findIndex(f => f.id === fazendaSelecionada.id);
+      if (idx !== -1) {
+        fazendas[idx] = fazendaSelecionada;
+        localStorage.setItem('pec_fazendas', JSON.stringify(fazendas));
+      }
+
+      document.getElementById('current-fazenda-display').innerText = fazendaSelecionada.nome;
+      alert("Nome da propriedade atualizado.");
     }
 
     function voltarParaFazendas() {
@@ -500,7 +549,13 @@
 
     function abrirModulo(modulo) {
       if (modulo === 'Configuracoes') {
-        abrirConfiguracoesDireto();
+        document.getElementById('cfg-edit-org').value = usuarioLogado.nome;
+        if (fazendaSelecionada) {
+          document.getElementById('cfg-edit-fazenda-nome').value = fazendaSelecionada.nome;
+        }
+        atualizarSelectFazendas();
+        document.getElementById('screen-hub').classList.add('hidden');
+        document.getElementById('screen-config').classList.remove('hidden');
         return;
       }
       alert(`Módulo ${modulo} selecionado.`);
