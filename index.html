@@ -68,6 +68,8 @@
     .btn:hover { background: var(--green-medium); }
     .btn-secondary { background: #5a6268; }
     .btn-secondary:hover { background: #495057; }
+    .btn-outline { background: transparent; color: var(--green-dark); border: 2px dashed var(--green-medium); }
+    .btn-outline:hover { background: var(--green-light); }
 
     .modules-grid { 
       display: grid; 
@@ -105,17 +107,30 @@
       margin-bottom: 20px;
     }
 
-    .checkbox-group {
+    /* GRID REVISADO E ALINHADO PARA PERMISSÕES */
+    .checkbox-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: 10px;
       margin-top: 8px;
-      background: #f9f9f9;
-      padding: 12px;
-      border-radius: 6px;
-      border: 1px solid #eee;
     }
-    .checkbox-group label { margin: 0; font-weight: normal; cursor: pointer; }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8faf8;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #e0e8e0;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      cursor: pointer;
+    }
 
     .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
     .tab-btn { flex: 1; padding: 12px; background: #e9ecef; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: #495057; }
@@ -158,7 +173,7 @@
       <form id="form-register" class="hidden" onsubmit="cadastrarUsuarioInicial(event)">
         <label>Organização:</label>
         <input type="text" id="reg-name" required placeholder="Nome do grupo">
-        <label>Usuário:</label>
+        <label>Nome de Usuário:</label>
         <input type="text" id="reg-user" required placeholder="Nome do usuário">
         <label>Senha:</label>
         <input type="password" id="reg-pass" required placeholder="Senha">
@@ -166,7 +181,7 @@
       </form>
     </div>
 
-    <!-- TELA 2: SELEÇÃO E CRIAÇÃO RÁPIDA DE PROPRIEDADE -->
+    <!-- TELA 2: SELEÇÃO DE PROPRIEDADE -->
     <div id="screen-fazendas" class="card hidden">
       <div class="header-bar">
         <div>
@@ -184,8 +199,12 @@
         <button class="btn" onclick="acessarFazenda()">ACESSAR PROPRIEDADE</button>
       </div>
 
-      <!-- CRIAÇÃO RÁPIDA DE FAZENDA (SEMENTE) -->
-      <div id="area-criar-propriedade-rapida" class="section-box" style="margin-top: 25px;">
+      <div style="margin-top: 15px;" id="btn-toggle-criar-prop">
+        <button class="btn btn-outline" onclick="toggleCriarPropriedade()">+ Cadastrar Nova Propriedade</button>
+      </div>
+
+      <!-- BOX OCULTO PARA CADASTRO DE FAZENDA -->
+      <div id="area-criar-propriedade-rapida" class="section-box hidden" style="margin-top: 20px;">
         <h3>Cadastrar Propriedade</h3>
         <label>Nome da Propriedade:</label>
         <input type="text" id="quick-fazenda-nome" placeholder="Nome da propriedade">
@@ -194,19 +213,21 @@
           <option value="Brasil">Brasil</option>
           <option value="Paraguai">Paraguai</option>
         </select>
-        <button class="btn btn-secondary" style="margin-top: 15px;" onclick="salvarFazendaRapida()">CRIAR PROPRIEDADE</button>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-secondary" style="margin-top: 15px;" onclick="salvarFazendaRapida()">CRIAR PROPRIEDADE</button>
+          <button class="btn btn-secondary" style="margin-top: 15px; background: #999;" onclick="toggleCriarPropriedade()">CANCELAR</button>
+        </div>
       </div>
     </div>
 
-    <!-- TELA 3: HUB DE MÓDULOS -->
+    <!-- TELA 3: HUB DE MÓDULOS (CONFIGURAÇÕES APENAS NO GRID ABAIXO) -->
     <div id="screen-hub" class="card hidden">
       <div class="header-bar">
         <div>
           <h2 id="current-fazenda-display">Propriedade</h2>
         </div>
         <div>
-          <button class="btn btn-secondary" style="width: auto; margin:0 5px 0 0; padding: 8px 15px;" onclick="voltarParaFazendas()">Trocar Propriedade</button>
-          <button class="btn btn-secondary" id="btn-config-hub" style="width: auto; margin:0; padding: 8px 15px; background: #2b3a42;" onclick="abrirModulo('Configuracoes')">⚙️ Configurações</button>
+          <button class="btn btn-secondary" style="width: auto; margin:0;" onclick="voltarParaFazendas()">Trocar Propriedade</button>
         </div>
       </div>
 
@@ -281,31 +302,33 @@
         <button class="btn" onclick="salvarFazenda()">CADASTRAR PROPRIEDADE</button>
       </div>
 
+      <!-- FORMULÁRIO DE CADASTRO DE USUÁRIO CORRIGIDO -->
       <div class="section-box">
-        <h3>Cadastrar Usuário / Sublogin</h3>
+        <h3>Cadastrar Usuário</h3>
         <label>Organização / Nome:</label>
         <input type="text" id="cfg-user-nome" placeholder="Nome do usuário">
-        <label>Usuário de Acesso:</label>
-        <input type="text" id="cfg-user-login" placeholder="Nome de usuário para o login">
+        <label>Nome de Usuário:</label>
+        <input type="text" id="cfg-user-login" placeholder="Nome de usuário">
         <label>Senha:</label>
         <input type="password" id="cfg-user-pass" placeholder="Senha de acesso">
         
         <label>Cargo:</label>
         <select id="cfg-user-perfil">
           <option value="funcionario">Funcionário</option>
-          <option value="dono">Dono (Administrador)</option>
+          <option value="administrador">Administrador</option>
+          <option value="dono">Dono</option>
         </select>
 
         <label>Vincular à Propriedade:</label>
         <select id="cfg-user-fazenda"></select>
 
         <label>Permissões aos Aplicativos:</label>
-        <div class="checkbox-group">
-          <label><input type="checkbox" value="Campo" class="cfg-perm"> Campo</label>
-          <label><input type="checkbox" value="Planeja" class="cfg-perm"> Planeja</label>
-          <label><input type="checkbox" value="Pastagem" class="cfg-perm"> Pastagem</label>
-          <label><input type="checkbox" value="Engorda" class="cfg-perm"> Engorda</label>
-          <label><input type="checkbox" value="Orcamento" class="cfg-perm"> Orçamento</label>
+        <div class="checkbox-grid">
+          <label class="checkbox-item"><input type="checkbox" value="Campo" class="cfg-perm"> Campo</label>
+          <label class="checkbox-item"><input type="checkbox" value="Planeja" class="cfg-perm"> Planeja</label>
+          <label class="checkbox-item"><input type="checkbox" value="Pastagem" class="cfg-perm"> Pastagem</label>
+          <label class="checkbox-item"><input type="checkbox" value="Engorda" class="cfg-perm"> Engorda</label>
+          <label class="checkbox-item"><input type="checkbox" value="Orcamento" class="cfg-perm"> Orçamento</label>
         </div>
         <button class="btn" onclick="salvarUsuarioSub()">CADASTRAR USUÁRIO</button>
       </div>
@@ -376,10 +399,12 @@
       
       document.getElementById('user-display').innerText = `Organização/Usuário: ${usuarioLogado.nome}`;
 
-      const isDono = usuarioLogado.tipo === 'dono' || usuarioLogado.tipo === 'admin';
-      document.getElementById('area-criar-propriedade-rapida').classList.toggle('hidden', !isDono);
-
       atualizarSelectFazendas();
+    }
+
+    function toggleCriarPropriedade() {
+      const el = document.getElementById('area-criar-propriedade-rapida');
+      el.classList.toggle('hidden');
     }
 
     function atualizarSelectFazendas() {
@@ -388,7 +413,7 @@
       select.innerHTML = '';
 
       let permitidas = [];
-      if (usuarioLogado.tipo === 'dono' || usuarioLogado.tipo === 'admin') {
+      if (usuarioLogado.tipo === 'dono' || usuarioLogado.tipo === 'administrador') {
         permitidas = fazendas;
       } else {
         permitidas = fazendas.filter(f => f.id === usuarioLogado.fazendaId);
@@ -428,6 +453,7 @@
       fazendas.push(nova);
       localStorage.setItem('pec_fazendas', JSON.stringify(fazendas));
       document.getElementById('quick-fazenda-nome').value = '';
+      toggleCriarPropriedade();
       atualizarSelectFazendas();
       alert("Propriedade cadastrada com sucesso.");
     }
@@ -442,14 +468,13 @@
       fazendaSelecionada = fazendas.find(f => f.id === id);
       document.getElementById('current-fazenda-display').innerText = fazendaSelecionada.nome;
 
-      const isDono = usuarioLogado.tipo === 'dono' || usuarioLogado.tipo === 'admin';
-      document.getElementById('btn-config-hub').classList.toggle('hidden', !isDono);
-      document.getElementById('app-Configuracoes').classList.toggle('hidden', !isDono);
+      const isDonoOuAdmin = usuarioLogado.tipo === 'dono' || usuarioLogado.tipo === 'administrador';
+      document.getElementById('app-Configuracoes').classList.toggle('hidden', !isDonoOuAdmin);
 
       const modulos = ['Campo', 'Planeja', 'Pastagem', 'Engorda', 'Orcamento'];
       modulos.forEach(mod => {
         const el = document.getElementById(`app-${mod}`);
-        if (isDono) {
+        if (isDonoOuAdmin) {
           el.classList.remove('hidden');
         } else {
           const liberado = usuarioLogado.permissoes && usuarioLogado.permissoes.includes(mod);
@@ -528,7 +553,7 @@
       document.getElementById('cfg-user-nome').value = '';
       document.getElementById('cfg-user-login').value = '';
       document.getElementById('cfg-user-pass').value = '';
-      alert("Usuário cadastrado.");
+      alert("Usuário cadastrado com sucesso.");
     }
 
     function atualizarDadosConta() {
