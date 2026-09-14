@@ -68,7 +68,7 @@
     .btn:hover { background: var(--green-medium); }
     .btn-secondary { background: #5a6268; }
     .btn-secondary:hover { background: #495057; }
-    .btn-outline { background: transparent; color: var(--green-dark); border: 2px dashed var(--green-medium); }
+    .btn-outline { background: white; color: var(--green-dark); border: 2px solid var(--green-medium); font-weight: bold; }
     .btn-outline:hover { background: var(--green-light); }
 
     .modules-grid { 
@@ -107,7 +107,6 @@
       margin-bottom: 20px;
     }
 
-    /* GRID REVISADO E ALINHADO PARA PERMISSÕES */
     .checkbox-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -220,7 +219,7 @@
       </div>
     </div>
 
-    <!-- TELA 3: HUB DE MÓDULOS (CONFIGURAÇÕES APENAS NO GRID ABAIXO) -->
+    <!-- TELA 3: HUB DE MÓDULOS -->
     <div id="screen-hub" class="card hidden">
       <div class="header-bar">
         <div>
@@ -269,7 +268,6 @@
       <div class="header-bar">
         <div>
           <h2>Configurações</h2>
-          <p style="margin:0;">Administração de Propriedades, Usuários e Dados da Conta</p>
         </div>
         <button class="btn btn-secondary" style="width: auto; margin:0; padding: 8px 15px;" onclick="fecharConfiguracoes()">Voltar ao Painel</button>
       </div>
@@ -302,11 +300,11 @@
         <button class="btn" onclick="salvarFazenda()">CADASTRAR PROPRIEDADE</button>
       </div>
 
-      <!-- FORMULÁRIO DE CADASTRO DE USUÁRIO CORRIGIDO -->
+      <!-- FORMULÁRIO DE CADASTRO DE USUÁRIO -->
       <div class="section-box">
         <h3>Cadastrar Usuário</h3>
-        <label>Organização / Nome:</label>
-        <input type="text" id="cfg-user-nome" placeholder="Nome do usuário">
+        <label>Organização:</label>
+        <input type="text" id="cfg-user-nome" placeholder="Nome do grupo">
         <label>Nome de Usuário:</label>
         <input type="text" id="cfg-user-login" placeholder="Nome de usuário">
         <label>Senha:</label>
