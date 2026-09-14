@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plataforma Unificada de Gestão Pecuária</title>
+  <style>
+    :root { --green-main: #1b4332; --green-light: #e8f5e9; --border: #d8f3dc; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background: #f8faf8; color: #1c2d1b; }
+    
+    /* MENU LATERAL */
+    .app-container { display: flex; min-height: 100vh; }
+    sidebar { width: 240px; background: var(--green-main); color: white; padding: 20px; box-sizing: border-box; }
+    sidebar h2 { font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-top: 0; }
+    sidebar button { display: block; width: 100%; background: transparent; border: none; color: #d8f3dc; text-align: left; padding: 12px 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-bottom: 5px; }
+    sidebar button.active, sidebar button:hover { background: rgba(255,255,255,0.15); color: white; }
+    
+    /* CONTEÚDO PRINCIPAL */
+    main { flex: 1; padding: 20px; box-sizing: border-box; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .card { background: white; padding: 18px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.04); margin-bottom: 15px; }
+    
+    /* FORMULÁRIOS E TABELAS */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .full { grid-column: span 2; }
+    label { font-size: 12px; font-weight: bold; color: #2d6a4f; display: block; margin-top: 8px; }
+    input, select { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ccd6cf; border-radius: 6px; box-sizing: border-box; }
+    .btn-action { background: var(--green-main); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    th, td { padding: 10px; border-bottom: 1px solid #dfe5df; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    th { background: #f1f4f1; color: #53645a; font-size: 11px; text-transform: uppercase; }
+    .badge-ok { color: #2e6b45; font-weight: bold; }
+    .badge-alert { color: #b54336; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- MENU DE NAVEGAÇÃO DO NOVO SISTEMA -->
+    <sidebar>
+      <h2>🚜 Gestão Pecuária</h2>
+      <button class="active" onclick="mudarTela('fechamento')">1. Fechamento Inttegra</button>
+      <button onclick="mudarTela('orcamento')">2. Rural Orçamento</button>
+    </sidebar>
+
+    <main>
+      <!-- TELA 1: FECHAMENTO INTTEGRA -->
+      <section id="fechamento" class="page active">
+        <div class="card">
+          <h1>Fechamento Zootécnico & Financeiro</h1>
+          <div class="grid-2">
+            <div><label>Machos (Engorda/Confinado):</label><input type="number" id="machos" value="385"></div>
+            <div><label>Fêmeas (Recria a Pasto):</label><input type="number" id="femeas" value="715"></div>
+            <div><label>GMD Mês Machos (kg/dia):</label><input type="number" step="0.01" id="gmdMacho" value="1.35"></div>
+            <div><label>GMD Mês Fêmeas (kg/dia):</label><input type="number" step="0.01" id="gmdFemea" value="0.55"></div>
+            <div class="full"><label>Despesas Operacionais (R$):</label><input type="number" id="despesas" value="95000"></div>
+            <div class="full"><label>Cotação da Arroba (R$):</label><input type="number" id="precoArroba" value="230"></div>
+          </div>
+          <button class="btn-action" onclick="calcularInttegra()">CALCULAR BENCHMARKING</button>
+        </div>
+
+        <div class="card" id="painelInttegra" style="background: var(--green-light); border-left: 5px solid #40916c;">
+          Resultados serão exibidos aqui.
+        </div>
+      </section>
+
+      <!-- TELA 2: RURAL ORÇAMENTO -->
+      <section id="orcamento" class="page">
+        <div class="card">
+          <h1>Rural Orçamento — Previsto vs. Realizado</h1>
+          <div class="grid-2">
+            <div>
+              <label>Selecione a Estância:</label>
+              <select id="selectEstancia" onchange="carregarOrcamento()">
+                <option value="estancia_1">Estância Recria / Pasto</option>
+                <option value="estancia_2">Estância Engorda / Confinamento</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <table>
+            <thead>
+              <tr>
+                <th>Centro de Custos</th>
+                <th>Orçado (R$)</th>
+                <th>Realizado (R$)</th>
+                <th>Desvio (R$)</th>
+                <th>Variação (%)</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaOrcamento"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function mudarTela(telaId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('sidebar button').forEach(b => b.classList.remove('active'));
+      document.getElementById(telaId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function calcularInttegra() {
+      const machos = parseFloat(document.getElementById('machos').value) || 0;
+      const femeas = parseFloat(document.getElementById('femeas').value) || 0;
+      const despesas = parseFloat(document.getElementById('despesas').value) || 0;
+      const gmdM = parseFloat(document.getElementById('gmdMacho').value) || 0;
+      const gmdF = parseFloat(document.getElementById('gmdFemea').value) || 0;
+      const cotacao = parseFloat(document.getElementById('precoArroba').value) || 0;
+
+      const totalAnimais = machos + femeas;
+      const totalArrobas = ((machos * gmdM * 30 * 0.54) + (femeas * gmdF * 30 * 0.52)) / 15;
+      const desembolsoCab = totalAnimais > 0 ? (despesas / totalAnimais) : 0;
+      const custeioArroba = totalArrobas > 0 ? (despesas / totalArrobas) : 0;
+      const margemVenda = cotacao > 0 ? (((cotacao - custeioArroba) / cotacao) * 100) : 0;
+
+      document.getElementById('painelInttegra').innerHTML = `
+        <p><strong>Arrobas Produzidas:</strong> ${totalArrobas.toFixed(1)} @</p>
+        <p><strong>Desembolso Cab/Mês:</strong> R$ ${desembolsoCab.toFixed(2)} (Meta Inttegra: R$ 84,71 - R$ 96,61)</p>
+        <p><strong>Custeio por @ Produzida:</strong> R$ ${custeioArroba.toFixed(2)} / @ (Top Rentáveis: R$ 161,25 / @)</p>
+        <p><strong>Margem sobre Venda (MSV):</strong> ${margemVenda.toFixed(1)}% (Meta Inttegra: > 47,9%)</p>
+      `;
+    }
+
+    const dadosOrcamento = {
+      estancia_1: [
+        { categoria: "Suplementação & Sal", orcado: 45000, realizado: 48200 },
+        { categoria: "Mão de Obra", orcado: 18000, realizado: 17500 },
+        { categoria: "Arrendamento / Pasto", orcado: 12000, realizado: 12000 }
+      ],
+      estancia_2: [
+        { categoria: "Ração Confinamento", orcado: 120000, realizado: 115000 },
+        { categoria: "Mão de Obra", orcado: 22000, realizado: 22000 }
+      ]
+    };
+
+    function carregarOrcamento() {
+      const estancia = document.getElementById('selectEstancia').value;
+      const itens = dadosOrcamento[estancia] || [];
+      const tbody = document.getElementById('tabelaOrcamento');
+      let html = '';
+
+      itens.forEach(item => {
+        const desvio = item.realizado - item.orcado;
+        const pct = item.orcado > 0 ? (desvio / item.orcado) * 100 : 0;
+        const cls = desvio <= 0 ? 'badge-ok' : 'badge-alert';
+        html += `
+          <tr>
+            <td><strong>${item.categoria}</strong></td>
+            <td>R$ ${item.orcado.toLocaleString('pt-BR')}</td>
+            <td>R$ ${item.realizado.toLocaleString('pt-BR')}</td>
+            <td class="${cls}">R$ ${desvio.toLocaleString('pt-BR')}</td>
+            <td class="${cls}">${pct > 0 ? '+' : ''}${pct.toFixed(1)}%</td>
+          </tr>`;
+      });
+      tbody.innerHTML = html;
+    }
+
+    carregarOrcamento();
+  </script>
+
+</body>
+</html>
